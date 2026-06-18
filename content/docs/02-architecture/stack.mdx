@@ -1,0 +1,100 @@
+---
+title: Stack tecnológico
+description: Dependencias, versiones y justificación de cada tecnología en SaberHub.
+---
+
+# Stack tecnológico
+
+## Runtime y framework
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `next` | 16.2.6 | Framework full-stack (App Router) |
+| `react` | 19.2.4 | UI |
+| `react-dom` | 19.2.4 | Renderizado DOM |
+| `typescript` | ^5.9.3 | Tipado estático |
+
+## Base de datos
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `@prisma/client` | ^7.8.0 | ORM type-safe |
+| `@prisma/adapter-pg` | ^7.8.0 | Adaptador nativo pg |
+| `pg` | ^8.20.0 | Driver PostgreSQL |
+| `prisma` (dev) | ^7.8.0 | CLI de migraciones |
+
+## Autenticación y seguridad
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `jose` | ^6.2.3 | JWT sign/verify (HS256) |
+| `bcryptjs` | ^3.0.3 | Hash de contraseñas (10 rounds) |
+| `@types/bcryptjs` | ^2.4.6 | Tipos TypeScript |
+
+## Email
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `nodemailer` | ^8.0.7 | SMTP (Gmail) |
+
+## Archivos y exportaciones
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `cloudinary` | ^2.10.0 | CDN de imágenes y recursos |
+| `xlsx` | ^0.18.5 | Exportación Excel |
+| `pdf-lib` | ^1.17.1 | Generación de PDF |
+| `adm-zip` | ^0.5.17 | SCORM zip upload |
+| `dotenv` | ^17.4.2 | Variables de entorno |
+
+## Scraping
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `puppeteer` | ^24.0.0 | Headless Chromium |
+| `robots-parser` | ^3.0.1 | Verificación robots.txt |
+
+## UI y estilos
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `tailwindcss` | ^4 | Utilidades CSS |
+| `@tailwindcss/postcss` | ^4 | Plugin PostCSS |
+| `lucide-react` | ^1.16.0 | Iconos |
+| `@dnd-kit/core` | ^6.3.1 | Drag & Drop (orden de lecciones) |
+| `@dnd-kit/sortable` | ^10.0.0 | Listas ordenables |
+| `@dnd-kit/utilities` | ^3.2.2 | Utilidades DnD |
+
+## Documentación
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `fumadocs-core` | ^15.0.0 | Navegación y búsqueda |
+| `fumadocs-ui` | ^15.0.0 | Componentes UI de docs |
+| `fumadocs-mdx` | ^11.0.0 | Procesamiento MDX |
+
+## Herramientas de desarrollo
+
+| Paquete | Versión | Uso |
+|---------|---------|-----|
+| `eslint` | ^9 | Linting |
+| `eslint-config-next` | 16.2.6 | Reglas Next.js |
+| `prettier` | ^3.2.5 | Formateo de código |
+| `tsx` | ^4.22.0 | Ejecutar scripts TypeScript |
+
+## Variables de entorno requeridas
+
+```properties
+DATABASE_URL=postgresql://user:pass@host:5432/saberhub
+JWT_SECRET=<hex-64-chars>
+CLOUDINARY_URL=cloudinary://key:secret@cloud_name
+CLIENT_ID=<google-oauth-client-id>
+CLIENT_SECRET=<google-oauth-client-secret>
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=<gmail>
+SMTP_PASS=<app-password>
+SMTP_FROM="SaberHub <email>"
+SMTP_BLOCK_DEMO_EMAILS=true
+```

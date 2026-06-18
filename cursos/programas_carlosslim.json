@@ -1,0 +1,107 @@
+[
+  {
+    "title": "Aprende (Aprende.org)",
+    "url": "https://aprende.org/",
+    "description": "Una plataforma que integra programas digitales en educación, cultura, salud y empleo. Ofrece acceso gratuito a contenidos de instituciones como MIT, Coursera y Khan Academy sin costo de datos en la red Telcel en México."
+  },
+  {
+    "title": "Educación Inicial",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Se enfoca en los primeros años de vida capacitando a adultos responsables del cuidado y educación de los niños, enfatizando la importancia de los vínculos afectivos y el desarrollo temprano."
+  },
+  {
+    "title": "PruébaT",
+    "url": "https://pruebat.org/",
+    "description": "Una plataforma interactiva que ofrece cursos, juegos, libros digitales y simuladores de exámenes para fortalecer habilidades matemáticas, digitales, científicas y tecnológicas para estudiantes y maestros."
+  },
+  {
+    "title": "Khan Academy en Español",
+    "url": "https://es.khanacademy.org/",
+    "description": "Una alianza que proporciona videos educativos y ejercicios prácticos para el aprendizaje autodidacta o asistido en Matemáticas, Ciencias, Computación, Economía y Finanzas."
+  },
+  {
+    "title": "Académica",
+    "url": "https://academica.mx/",
+    "description": "Plataforma tecnológica que promueve el intercambio de conocimientos entre estudiantes, docentes e investigadores de instituciones de educación superior para fortalecer el desarrollo profesional."
+  },
+  {
+    "title": "MIT OpenCourseWare",
+    "url": "https://ocw.mit.edu/",
+    "description": "Una asociación con el MIT para brindar acceso gratuito a los cursos, proyectos y desarrollos educativos del instituto para estudiantes y profesionales."
+  },
+  {
+    "title": "Coursera",
+    "url": "https://www.coursera.org/",
+    "description": "Brinda acceso a cursos, certificados y títulos de universidades y empresas de clase mundial en todas las áreas del conocimiento."
+  },
+  {
+    "title": "Udacity",
+    "url": "https://www.udacity.com/",
+    "description": "Ofrece formación técnica enfocada en competencias de tecnología digital y desarrollo empresarial."
+  },
+  {
+    "title": "EdX",
+    "url": "https://www.edx.org/",
+    "description": "Una alianza que ofrece acceso a cursos y programas de las principales universidades y organizaciones mundiales."
+  },
+  {
+    "title": "Mario Molina Premio Nobel en Aprende",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Una sección dedicada a la vida y las contribuciones científicas del premio Nobel Mario Molina, con el objetivo de despertar la curiosidad por la ciencia."
+  },
+  {
+    "title": "Becas (Programas de Becas)",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Incluye varios programas: Fundación Telmex Telcel (excelencia académica), Carlos Slim en Salud (medicina/enfermería), Beca Digital Carso y asociaciones con la UNAM, el IPN y la Universidad George Washington."
+  },
+  {
+    "title": "Aldea Digital",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Un evento masivo de inclusión digital que brinda acceso y capacitación en Tecnologías de la Información y la Comunicación (TIC) para personas de todas las edades."
+  },
+  {
+    "title": "Aldea Digital Iztapalapa",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Un espacio educativo permanente equipado con conectividad de alta velocidad y experiencias de aprendizaje para mejorar la calidad de vida y apoyar a las pequeñas empresas."
+  },
+  {
+    "title": "Biblioteca Digital Telmex",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Espacios en escuelas y áreas públicas equipados con tecnología y conectividad para impulsar competencias personales, académicas y laborales."
+  },
+  {
+    "title": "México Siglo XXI",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Un evento anual para becarios que presenta conferencias de líderes de clase mundial en política, economía, tecnología y deportes."
+  },
+  {
+    "title": "Telmex Hub",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Un centro colaborativo para comunidades especializadas para crear y fortalecer proyectos tecnológicos con impacto social."
+  },
+  {
+    "title": "Inttelmex IT",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Un centro de educación superior que ofrece certificaciones, diplomados y maestrías en Tecnologías de la Información y Gestión."
+  },
+  {
+    "title": "Ayúdame a llegar",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Un programa que dona bicicletas a niños de zonas rurales para ayudarlos a trasladarse a la escuela y reducir las tasas de deserción."
+  },
+  {
+    "title": "Ver bien para aprender mejor",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Proporciona anteojos a estudiantes de primaria y secundaria con discapacidades visuales para mejorar su rendimiento académico."
+  },
+  {
+    "title": "Centro de Tecnología e Innovación (CTIN)",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Un espacio multidisciplinario para el desarrollo de soluciones creativas y tecnológicas con impacto social a través de tutoría y capacitación."
+  },
+  {
+    "title": "Centro de Inteligencia Digital Carso (CID)",
+    "url": "https://fundacioncarlosslim.org/educacion-2/",
+    "description": "Un centro enfocado en la absorción de tecnologías innovadoras y disruptivas para las diversas industrias dentro de Grupo Carso."
+  }
+]

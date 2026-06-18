@@ -1,0 +1,118 @@
+---
+title: Fuentes externas
+description: Configuración y gestión de fuentes de scraping en SaberHub.
+---
+
+# Fuentes externas
+
+Las fuentes externas (`FuenteExterna`) configuran de dónde se importan cursos.
+
+## Modelo
+
+```prisma
+model FuenteExterna {
+  id              Int    @id @default(autoincrement())
+  nombre          String @unique
+  url             String
+  bloqueado       Boolean @default(false)
+  motivoBloqueo   String?
+  createdAt       DateTime @default(now())
+}
+```
+
+## API de fuentes
+
+### GET /api/admin/fuentes
+
+Lista todas las fuentes configuradas.
+
+### POST /api/admin/fuentes
+
+Añadir nueva fuente.
+
+```json
+{
+  "nombre": "Mi Plataforma EDU",
+  "url": "https://miplataforma.edu.co"
+}
+```
+
+### PATCH /api/admin/fuentes/[id]
+
+Actualizar o bloquear fuente.
+
+```json
+{
+  "bloqueado": true,
+  "motivoBloqueo": "robots.txt no permite scraping de /cursos/"
+}
+```
+
+## Ejecutar scraper
+
+### POST /api/admin/scrapers/run
+
+Ejecuta el scraper para una fuente.
+
+```json
+{ "fuenteId": 2 }
+```
+
+**Proceso:**
+1. Verifica `FuenteExterna.bloqueado === false`
+2. Llama `robots-checker.isPathAllowed(fuente.url, '/cursos/')`
+3. Si bloqueado → error 403, registra en log
+4. Si permitido → lanza Puppeteer
+5. `page.goto(fuente.url)` con timeout 30s
+6. `page.evaluate()` extrae datos del DOM
+7. Upsert de `CursoExterno` (por `codigoExterno` o `urlOriginal`)
+8. Crea `LogScraping`
+
+### GET /api/admin/scrapers/status
+
+Estado del scraper: si está corriendo, última ejecución, próxima programada.
+
+## Logs de scraping
+
+### GET /api/admin/logs-scraping
+
+```json
+[{
+  "id": 1,
+  "fuenteId": 2,
+  "fecha": "2026-05-27T02:00:00Z",
+  "cursosEncontrados": 45,
+  "cursosNuevos": 3,
+  "cursosActualizados": 12,
+  "errores": 0,
+  "duracionMs": 8420
+}]
+```
+
+Logs disponibles en `/dashboard/cursos-externos/logs`.
+
+## Gestión de cursos externos
+
+### GET /api/admin/cursos-externos
+
+Lista cursos con filtro por estado: `?estado=pendiente|aprobado|rechazado`
+
+### PATCH /api/admin/cursos-externos/[id]
+
+Aprobar o rechazar:
+
+```json
+{ "estado": "aprobado" }
+```
+o
+```json
+{ "estado": "rechazado", "motivo": "Contenido duplicado" }
+```
+
+### POST /api/admin/cursos-externos/bulk-approve
+
+Aprobar múltiples cursos:
+
+```json
+{ "ids": [1, 2, 3, 4] }
+```

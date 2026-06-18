@@ -1,0 +1,111 @@
+---
+title: Variables de entorno
+description: Referencia completa de variables de entorno requeridas y opcionales en SaberHub.
+---
+
+# Variables de entorno
+
+## Requeridas
+
+### Base de datos
+
+```properties
+DATABASE_URL=postgresql://user:password@host:5432/saberhub
+```
+
+Formato estándar de PostgreSQL. Soporta parámetros adicionales: `?sslmode=require` para conexiones cifradas.
+
+### Autenticación JWT
+
+```properties
+JWT_SECRET=<hex-64-chars>
+```
+
+Generar un secreto seguro:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+### Cloudinary
+
+```properties
+CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
+```
+
+Obtenible desde el dashboard de Cloudinary → Settings → API Keys.
+
+### SMTP
+
+```properties
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu-email@gmail.com
+SMTP_PASS=xxxx xxxx xxxx xxxx
+SMTP_FROM="SaberHub <tu-email@gmail.com>"
+```
+
+Para Gmail, usar App Password (no la contraseña de cuenta). Activar en: Google Account → Security → 2-Step Verification → App passwords.
+
+## Opcionales
+
+### Google OAuth
+
+```properties
+CLIENT_ID=<google-oauth-client-id>.apps.googleusercontent.com
+CLIENT_SECRET=GOCSPX-<secret>
+```
+
+Crear en Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID.
+
+**Redirect URI:** `https://tu-dominio.com/api/auth/google/callback`
+
+### Control de emails demo
+
+```properties
+SMTP_BLOCK_DEMO_EMAILS=true
+```
+
+Si `true`, bloquea envío de emails a dominios de prueba (example.com, etc.) y los redirige a `SMTP_USER`.
+
+## Ejemplo de .env completo
+
+```properties
+# Base de datos
+DATABASE_URL=postgresql://postgres:password@localhost:5432/saberhub
+
+# JWT (generado con crypto.randomBytes)
+JWT_SECRET=349db6523ba3d3202853341903d2a44f316c746aefad307ea7f8e8ee075361fd
+
+# Cloudinary
+CLOUDINARY_URL=cloudinary://137443289769971:secretkey@mycloud
+
+# Google OAuth (opcional)
+CLIENT_ID=37786059578-xxxx.apps.googleusercontent.com
+CLIENT_SECRET=GOCSPX-xxxx
+
+# SMTP
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=admin@saberhub.edu.co
+SMTP_PASS=abcd efgh ijkl mnop
+SMTP_FROM="SaberHub <admin@saberhub.edu.co>"
+SMTP_BLOCK_DEMO_EMAILS=true
+```
+
+> No commitear `.env` al repositorio. Ya está en `.gitignore`.
+
+## En Vercel
+
+```bash
+# Ver variables actuales
+vercel env ls
+
+# Añadir variable
+vercel env add DATABASE_URL
+
+# Sincronizar a .env.local
+vercel env pull .env.local
+```

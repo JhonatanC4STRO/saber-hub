@@ -1,0 +1,40 @@
+---
+title: Seguridad
+description: Modelo de seguridad de SaberHub — autenticación, cabeceras, auditoría y protección de datos.
+---
+
+# Seguridad
+
+SaberHub implementa seguridad en múltiples capas: autenticación robusta, protección de sesión, cabeceras HTTP, auditoría de acciones y validación de entradas.
+
+## Resumen de controles
+
+| Control | Implementación |
+|---------|---------------|
+| Autenticación | JWT HS256, cookie HttpOnly |
+| Contraseñas | bcrypt 10 rounds |
+| Brute force | Bloqueo 15 min tras 5 fallos |
+| Verificación email | Token UUID, 24h, un solo uso |
+| Recuperación pass | Token UUID, 1h, un solo uso |
+| SSO | Google OAuth 2.0 |
+| Autorización | Verificación de rol en cada endpoint |
+| Cabeceras HTTP | HSTS, CSP, X-Frame-Options, etc. |
+| Auditoría | Log completo de acciones sensibles |
+| SCORM | SCORM packages validados antes de procesar |
+| Uploads | Solo URLs Cloudinary almacenadas |
+
+## Validación de contraseña
+
+Mínimo 8 caracteres. Hashed con bcrypt 10 rounds. Sin almacenamiento de contraseñas en texto plano.
+
+## Protección contra ataques comunes
+
+| Ataque | Mitigación |
+|--------|-----------|
+| SQL Injection | Prisma ORM (queries parametrizadas) |
+| XSS | React escapa valores por defecto + CSP |
+| CSRF | SameSite=Lax en cookie + cabecera Referer validada |
+| Clickjacking | `X-Frame-Options: DENY` |
+| MIME sniffing | `X-Content-Type-Options: nosniff` |
+| Brute force | Rate limiting por intentos fallidos |
+| Session hijacking | HttpOnly + Secure en cookie JWT |

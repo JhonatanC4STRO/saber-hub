@@ -1,0 +1,78 @@
+---
+title: Frontend
+description: Estructura de páginas, componentes y convenciones de la interfaz de SaberHub.
+---
+
+# Frontend
+
+SaberHub usa Next.js App Router con una mezcla de React Server Components (RSC) y Client Components (`'use client'`).
+
+## Estructura de rutas
+
+```
+app/
+├── (auth)/                    # Grupo sin layout compartido
+│   ├── login/
+│   ├── registro/
+│   ├── registro-instructor/
+│   ├── recuperar-contrasena/
+│   ├── restablecer-contrasena/
+│   └── verificar-cuenta/
+│
+├── catalogo/                  # Catálogo público
+├── cursos/[id]/               # Visor de curso
+│   ├── foro/                  # Foro del curso
+│   └── sesiones/              # Sesiones de videoconferencia
+│
+├── CrearCursos/               # Wizard de creación de cursos
+│   ├── modulos/
+│   ├── leccion/
+│   ├── evaluaciones/
+│   ├── configuracion/
+│   └── publicar/
+│
+├── dashboard/                 # Panel de administración
+│   ├── usuarios/
+│   ├── cursos/
+│   ├── reportes/
+│   ├── grupos/
+│   ├── certificados/
+│   ├── auditoria/
+│   ├── mensajes/
+│   ├── rutas/
+│   ├── cursos-externos/
+│   └── instituciones/
+│
+├── certificados/verificar/[codigo]/
+├── instituciones/
+├── docs/                      # Esta documentación (Fumadocs)
+├── api-reference/             # Swagger UI
+├── privacidad/
+└── terminos/
+```
+
+## Convenciones
+
+### Server vs Client Components
+
+| Usa RSC (default) | Usa `'use client'` |
+|-------------------|-------------------|
+| Páginas de solo lectura con datos | Formularios, botones, estado local |
+| Listados con fetch de DB | Drag & drop, heartbeat |
+| Layouts estáticos | Editors interactivos |
+| Metadata SEO | Swagger UI |
+
+### Estilos
+
+Tailwind CSS v4. No hay archivo de configuración `tailwind.config.js` separado — la configuración se hace directamente en el CSS con `@import "tailwindcss"`.
+
+### Iconos
+
+`lucide-react` v1.16.0. Uso: `import { BookOpen } from 'lucide-react'`.
+
+### Drag & Drop
+
+`@dnd-kit` para reordenar módulos y lecciones en el editor de cursos.
+- `DndContext` envuelve la lista
+- `SortableContext` con `verticalListSortingStrategy`
+- `useSortable` en cada elemento

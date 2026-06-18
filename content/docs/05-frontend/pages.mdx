@@ -1,0 +1,86 @@
+---
+title: Páginas
+description: Mapa de todas las páginas de SaberHub con sus rutas, acceso y función.
+---
+
+# Páginas
+
+## Página principal
+
+| Ruta | Acceso | Función |
+|------|--------|---------|
+| `/` | Público | Landing page de SaberHub |
+| `/catalogo` | Público | Catálogo de cursos filtrable |
+
+## Autenticación
+
+| Ruta | Función |
+|------|---------|
+| `/login` | Login con email/password o Google |
+| `/registro` | Registro de estudiante |
+| `/registro-instructor` | Registro de instructor (requiere token) |
+| `/recuperar-contrasena` | Solicitar reset de contraseña |
+| `/restablecer-contrasena` | Formulario con token de reset |
+| `/verificar-cuenta` | Verificación de email |
+
+## Cursos
+
+| Ruta | Acceso | Función |
+|------|--------|---------|
+| `/cursos/[id]` | Inscrito / Preview | Visor de contenido del curso |
+| `/cursos/[id]/foro` | Inscrito | Foro del curso |
+| `/cursos/[id]/sesiones` | Inscrito | Sesiones de videoconferencia |
+
+## Creación de cursos
+
+| Ruta | Acceso | Función |
+|------|--------|---------|
+| `/CrearCursos` | Instructor | Paso 1: info básica |
+| `/CrearCursos/modulos` | Instructor | Paso 2: estructura de módulos |
+| `/CrearCursos/leccion` | Instructor | Paso 3: contenido de lecciones |
+| `/CrearCursos/evaluaciones` | Instructor | Paso 4: evaluaciones |
+| `/CrearCursos/configuracion` | Instructor | Paso 5: configuración avanzada |
+| `/CrearCursos/publicar` | Instructor | Paso 6: revisión y publicación |
+
+## Dashboard de administración
+
+| Ruta | Función |
+|------|---------|
+| `/dashboard` | Panel principal con KPIs |
+| `/dashboard/usuarios` | Gestión de usuarios |
+| `/dashboard/usuarios/crear` | Crear usuario |
+| `/dashboard/usuarios/[id]` | Perfil de usuario |
+| `/dashboard/cursos` | Gestión de todos los cursos |
+| `/dashboard/reportes` | Exportación de reportes |
+| `/dashboard/grupos` | Gestión de grupos/cohortes |
+| `/dashboard/grupos/[id]` | Detalle de grupo |
+| `/dashboard/grupos/workspace` | Espacios colaborativos |
+| `/dashboard/certificados` | Emisión y revocación |
+| `/dashboard/auditoria` | Logs de auditoría |
+| `/dashboard/mensajes` | Mensajería interna |
+| `/dashboard/rutas` | Rutas de formación |
+| `/dashboard/cursos-externos` | Cursos importados |
+| `/dashboard/cursos-externos/logs` | Logs de scraping |
+| `/dashboard/instituciones` | Gestión de instituciones |
+| `/dashboard/solicitudes-instructor` | Solicitudes pendientes |
+
+## Certificados (público)
+
+| Ruta | Función |
+|------|---------|
+| `/certificados/verificar/[codigo]` | Verificación pública (sin login) |
+
+## Documentación
+
+| Ruta | Función |
+|------|---------|
+| `/docs` | Fumadocs — esta documentación |
+| `/api-reference` | Swagger UI interactivo |
+
+## Legal
+
+| Ruta | Función |
+|------|---------|
+| `/privacidad` | Política de privacidad |
+| `/terminos` | Términos de servicio |
+| `/instituciones` | Registro de institución |

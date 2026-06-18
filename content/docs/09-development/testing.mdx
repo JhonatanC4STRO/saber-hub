@@ -1,0 +1,116 @@
+---
+title: Testing
+description: Suite de pruebas de SaberHub — unitarias, integración y carga.
+---
+
+# Testing
+
+## Tests unitarios
+
+Directorio: `__tests__/`  
+Runner: `node __tests__/runner.js` (runner personalizado, sin framework externo).
+
+```bash
+pnpm test
+```
+
+### Estructura
+
+```
+__tests__/
+├── runner.js           # Test runner custom
+├── auth.test.js        # Pruebas de autenticación
+├── progreso.test.js    # Pruebas de heartbeat y progreso
+└── reportes.test.js    # Pruebas de exportación
+```
+
+### Escribir un test
+
+```js
+// __tests__/mi-feature.test.js
+export async function testMiFeature() {
+  const resultado = miFuncion('input');
+  if (resultado !== 'expected') {
+    throw new Error(`Expected 'expected', got '${resultado}'`);
+  }
+  console.log('✓ testMiFeature');
+}
+```
+
+El runner importa y ejecuta todas las funciones exportadas.
+
+## Tests de integración
+
+Para probar la API completa con la DB real:
+
+```bash
+# Setup: DB de test separada
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saberhub_test npx prisma db push
+
+# Ejecutar con DB de test
+DATABASE_URL=... pnpm test
+```
+
+## Load testing con k6
+
+El proyecto incluye scripts de carga para probar concurrencia:
+
+```bash
+# Instalar k6
+npm install -g k6
+
+# Ejecutar test de carga básico
+k6 run scripts/load-test.js
+```
+
+Script de ejemplo para heartbeat:
+
+```js
+// scripts/load-test.js
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+export const options = {
+  vus: 100,        // 100 usuarios virtuales
+  duration: '30s',
+};
+
+export default function () {
+  const res = http.post(
+    'http://localhost:3000/api/progreso/heartbeat',
+    JSON.stringify({ inscripcionId: 1 }),
+    { headers: { 'Content-Type': 'application/json', Cookie: 'token=...' } }
+  );
+  check(res, { 'status 200': (r) => r.status === 200 });
+  sleep(15);
+}
+```
+
+## CI/CD con GitHub Actions
+
+Workflow en `.github/workflows/`:
+
+```yaml
+name: CI
+on: [push, pull_request]
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+```
+
+## Cobertura recomendada
+
+| Módulo | Prioridad | Tipo |
+|--------|-----------|------|
+| Auth (login, brute force, tokens) | Alta | Unitario |
+| Heartbeat / progreso | Alta | Integración |
+| Exportación Excel/PDF | Media | Integración |
+| Scraping (robots.txt) | Media | Unitario |
+| Verificación de certificados | Alta | Integración |

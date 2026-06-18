@@ -1,0 +1,90 @@
+---
+title: Reportes
+description: Endpoint de exportación de reportes en Excel y PDF con filtros avanzados.
+---
+
+# API — Reportes
+
+## GET /api/reportes/exportar
+
+Exporta datos de progreso en formato Excel (`.xlsx`) o PDF.
+
+**Requiere:** rol `admin` o `instructor`.
+
+### Query parameters
+
+| Param | Tipo | Descripción |
+|-------|------|-------------|
+| `format` | `xlsx` \| `pdf` | Formato de exportación |
+| `cursoId` | `number` | Filtrar por curso |
+| `grupoId` | `number` | Filtrar por grupo |
+| `fechaInicio` | `ISO date` | Fecha de inscripción desde |
+| `fechaFin` | `ISO date` | Fecha de inscripción hasta |
+| `estudianteId` | `number` | Filtrar por estudiante |
+
+### Ejemplo
+
+```
+GET /api/reportes/exportar?format=xlsx&cursoId=3&fechaInicio=2026-01-01&fechaFin=2026-05-27
+```
+
+### Columnas del reporte
+
+| Columna | Descripción |
+|---------|-------------|
+| Estudiante | Nombre completo |
+| Email | Correo electrónico |
+| Documento | Número de identificación |
+| Curso | Nombre del curso |
+| Progreso | Porcentaje (0-100) |
+| Tiempo conectado | En minutos |
+| Nota promedio | Promedio de evaluaciones |
+| Evaluaciones aprobadas | Conteo |
+| Certificado | Código o "Sin certificar" |
+| Fecha inscripción | ISO date |
+| Último acceso | ISO datetime |
+
+### Formato Excel
+
+- Encabezados con fondo oscuro, texto blanco
+- Ancho de columna auto-ajustado al contenido
+- `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- `Content-Disposition: attachment; filename="reporte-saberhub-YYYY-MM-DD.xlsx"`
+
+### Formato PDF
+
+- Tamaño carta (Letter: 612 × 792 pt)
+- Banner SaberHub en encabezado
+- Filas con color alterno (zebra striping)
+- Auto-paginación: encabezado repetido en cada página nueva
+- `Content-Type: application/pdf`
+- `Content-Disposition: attachment; filename="reporte-saberhub-YYYY-MM-DD.pdf"`
+
+---
+
+## GET /api/progreso/curso/[cursoId]
+
+Resumen de progreso de todos los estudiantes en un curso.
+
+**Requiere:** instructor del curso o admin.
+
+**Respuesta 200:**
+```json
+{
+  "curso": { "id": 3, "titulo": "Python" },
+  "estudiantes": [{
+    "id": 1,
+    "nombre": "Ana",
+    "progreso": 85,
+    "tiempoConectadoMinutos": 320,
+    "notaPromedio": 88.5,
+    "certificado": "SBHB-2026-00042"
+  }]
+}
+```
+
+---
+
+## GET /api/progreso/grupo/[cursoId]
+
+Progreso agregado por grupo para un curso.

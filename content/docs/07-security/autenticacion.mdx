@@ -1,0 +1,119 @@
+---
+title: Autenticación y sesión
+description: Detalles de implementación de JWT, bcrypt, brute force y Google OAuth en SaberHub.
+---
+
+# Autenticación y sesión
+
+## JWT
+
+Biblioteca: `jose` v6.  
+Algoritmo: HS256.  
+Expiración: 7 días.  
+Almacenamiento: Cookie HttpOnly, Secure, SameSite=Lax, Path=/.
+
+```ts
+// lib/jwt.ts
+import { SignJWT, jwtVerify } from 'jose';
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+export async function signToken(payload: Record<string, unknown>) {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setExpirationTime('7d')
+    .sign(secret);
+}
+
+export async function verifyToken(token: string) {
+  const { payload } = await jwtVerify(token, secret);
+  return payload;
+}
+```
+
+**Payload incluye:** `{ id, email, rol, iat, exp }`
+
+## Hash de contraseñas
+
+```ts
+// lib/password.js
+import bcrypt from 'bcryptjs';
+
+export async function hashPassword(password) {
+  return bcrypt.hash(password, 10);
+}
+
+export async function verifyPassword(password, hash) {
+  return bcrypt.compare(password, hash);
+}
+```
+
+10 rounds de bcrypt ≈ 100ms en hardware moderno.
+
+## Protección brute force
+
+Campos en `Usuario`: `intentosFallidos`, `bloqueadoHasta`.
+
+```ts
+// En /api/auth/login
+if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > new Date()) {
+  return NextResponse.json({ error: 'Cuenta bloqueada temporalmente' }, { status: 403 });
+}
+
+const valid = await verifyPassword(password, usuario.passwordHash);
+if (!valid) {
+  const nuevosIntentos = usuario.intentosFallidos + 1;
+  const updates: Partial<Usuario> = { intentosFallidos: nuevosIntentos };
+  if (nuevosIntentos >= 5) {
+    updates.bloqueadoHasta = new Date(Date.now() + 15 * 60 * 1000);
+  }
+  await prisma.usuario.update({ where: { id: usuario.id }, data: updates });
+  return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 });
+}
+
+// Login exitoso: resetear intentos
+await prisma.usuario.update({
+  where: { id: usuario.id },
+  data: { intentosFallidos: 0, bloqueadoHasta: null, ultimoAcceso: new Date() }
+});
+```
+
+## Tokens de un solo uso
+
+### Verificación de email
+
+```ts
+model VerificationToken {
+  token     String   @unique
+  email     String
+  expiresAt DateTime  // now + 24h
+  usado     Boolean   @default(false)
+}
+```
+
+Al usar: `UPDATE SET usado = true`. Verificación: `!token.usado && token.expiresAt > now`.
+
+### Reset de contraseña
+
+```ts
+model PasswordResetToken {
+  token     String   @unique
+  email     String
+  expiresAt DateTime  // now + 1h
+  usado     Boolean   @default(false)
+}
+```
+
+## Google OAuth 2.0
+
+Flujo: Authorization Code Flow.
+
+1. `/api/auth/google` → `redirect_uri` a Google con `client_id`, `scope=openid email profile`
+2. Google redirige a `/api/auth/google/callback?code=...`
+3. Intercambio code → access_token + id_token
+4. Verificar id_token → extraer `email`, `name`, `sub`
+5. Si email existe en DB: login (si verificado)
+6. Si no existe: crear usuario con `verificado=true` (Google ya verificó el email)
+7. Emitir JWT + cookie
+
+**Vars requeridas:** `CLIENT_ID`, `CLIENT_SECRET`

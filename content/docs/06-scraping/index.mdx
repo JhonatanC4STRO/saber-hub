@@ -1,0 +1,60 @@
+---
+title: Scraping de cursos externos
+description: Sistema de importación de cursos externos con Puppeteer y cumplimiento de robots.txt.
+---
+
+# Scraping de cursos externos
+
+SaberHub importa cursos gratuitos de plataformas educativas externas como complemento al catálogo propio. El sistema garantiza cumplimiento legal y solo almacena metadatos.
+
+## Principios del sistema (Reglas RL)
+
+| Regla | Descripción |
+|-------|-------------|
+| RL-01 | Verificar `robots.txt` antes de cualquier scraping |
+| RL-02 | Respetar el `Crawl-delay` del sitio |
+| RL-03 | Solo scraping de plataformas públicas de educación gratuita |
+| RL-04 | No almacenar archivos; solo metadatos y URLs de origen |
+| RL-05 | Capacidad de bloquear fuentes problemáticas |
+
+## Flujo completo
+
+```
+1. Admin configura FuenteExterna en /dashboard/cursos-externos
+2. Admin ejecuta scraper: POST /api/admin/scrapers/run { fuenteId }
+3. robots-checker verifica permisos del path
+4. Puppeteer navega y extrae metadatos
+5. CursoExterno creado con estado "pendiente"
+6. LogScraping registra ejecución
+7. Admin revisa y aprueba/rechaza cada curso
+8. Cursos aprobados visibles en catálogo (enlace a fuente original)
+```
+
+## Fuentes configuradas
+
+| Fuente | URL | Método de acceso |
+|--------|-----|-----------------|
+| SENA Sofia Plus | sofia.senasofiaplus.edu.co | Puppeteer (SPA) |
+| Coursera | coursera.org | API oficial + Puppeteer |
+| edX | edx.org | API oficial |
+| Khan Academy | khanacademy.org | API oficial |
+| Miríada X | miriadax.net | Puppeteer (fallback) |
+
+## Datos almacenados por curso externo
+
+```ts
+{
+  titulo: string
+  descripcion: string
+  fuenteNombre: string        // "SENA", "Coursera", etc.
+  fuenteUrl: string           // URL de la fuente
+  codigoExterno: string?      // ID en la plataforma origen
+  urlOriginal: string         // URL directa al curso
+  duracionHoras: number?
+  nivel: string?              // "principiante", "intermedio", etc.
+  modalidad: string?          // "online", "virtual", etc.
+  estado: "pendiente" | "aprobado" | "rechazado"
+}
+```
+
+**No se almacena:** contenido de lecciones, videos, PDFs ni ningún archivo del curso original.

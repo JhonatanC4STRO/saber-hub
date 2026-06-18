@@ -1,0 +1,232 @@
+[
+  {
+    "titulo": "Introducción al análisis de datos de Microsoft",
+    "institucion": "Microsoft",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/428207:Introduccion-al-analisis-de-datos-de-Microsoft"
+  },
+  {
+    "titulo": "Fundamentos del ciclo de vida del software: automatización del flujo de trabajo con acciones de GitHub",
+    "institucion": "Microsoft",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/428129:Fundamentos-del-ciclo-de-vida-del-software-automatizacion-del-flujo-de-trabajo-con-acciones-de-GitHub"
+  },
+  {
+    "titulo": "Fundamentos de programación (POO): Implementar clases, propiedades y métodos",
+    "institucion": "Microsoft",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/428124:Fundamentos-de-programacion-POO-Implementar-clases-propiedades-y-metodos"
+  },
+  {
+    "titulo": "⁠Desarrollo de aplicaciones avanzadas: Creación de gemelos digitales de realidad mixta con Azure Digital Twins y Unity",
+    "institucion": "Microsoft",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/428130:Desarrollo-de-aplicaciones-avanzadas-Creacion-de-gemelos-digitales-de-realidad-mixta-con-Azure-Digital-Twins-y-Unity"
+  },
+  {
+    "titulo": "Certificación HCIA IA V4.0",
+    "institucion": "Huawei",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276882:Certificacion-HCIA-IA-V4-0"
+  },
+  {
+    "titulo": "Certificación HCIA Big Data V3.5",
+    "institucion": "Huawei",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276881:Certificacion-HCIA-Big-Data-V3-5"
+  },
+  {
+    "titulo": "Certificación HCIA CLOUD Service V3.5",
+    "institucion": "Huawei",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276885:Certificacion-HCIA-CLOUD-Service-V3-5"
+  },
+  {
+    "titulo": "Líder de IA generativa",
+    "institucion": "Google",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/404598:Lider-de-IA-generativa"
+  },
+  {
+    "titulo": "Google Cloud Engineering",
+    "institucion": "Google",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/404596:Google-Cloud-Engineering"
+  },
+  {
+    "titulo": "Google Cloud Computing Foundations",
+    "institucion": "Google",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/277215:Google-Cloud-Computing-Foundations"
+  },
+  {
+    "titulo": "21st Century Technologies",
+    "institucion": "Ericsson",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/395729:21st-Century-Technologies"
+  },
+  {
+    "titulo": "Certificación OpenEuler",
+    "institucion": "Huawei",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/397433:Certificacion-OpenEuler"
+  },
+  {
+    "titulo": "Ruta de formación: OpenGauss",
+    "institucion": "Huawei",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/397434:Ruta-de-formacion-OpenGauss"
+  },
+  {
+    "titulo": "Certificación HCIA IoT",
+    "institucion": "Huawei",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276884:Certificacion-HCIA-IoT"
+  },
+  {
+    "titulo": "Certificación HCIA 5G",
+    "institucion": "Huawei",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/276880:Certificacion-HCIA-5G"
+  },
+  {
+    "titulo": "Herramientas para la búsqueda y consecución de empleo utilizando IA",
+    "institucion": "IBM",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276870:Herramientas-para-la-busqueda-y-consecucion-de-empleo-utilizando-IA"
+  },
+  {
+    "titulo": "Comprendiendo las nuevas tecnologías y nuevas carreras: ciberseguridad y desarrollo web",
+    "institucion": "IBM",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/400278:Comprendiendo-las-nuevas-tecnologias-y-nuevas-carreras-ciberseguridad-y-desarrollo-web"
+  },
+  {
+    "titulo": "Fortinet Certified Professional",
+    "institucion": "Fortinet",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/382905:Fortinet-Certified-Professional"
+  },
+  {
+    "titulo": "Fortinet Certified Fundamentals in Cybersecurity",
+    "institucion": "Fortinet",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/382902:Fortinet-Certified-Fundamentals-in-Cybersecurity"
+  },
+  {
+    "titulo": "Fortinet Certified Solution Specialist",
+    "institucion": "Fortinet",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/382906:Fortinet-Certified-Solution-Specialist"
+  },
+  {
+    "titulo": "Database Foundations",
+    "institucion": "Oracle Academy",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/404594:Database-Foundations"
+  },
+  {
+    "titulo": "Diseño de Bases de Datos",
+    "institucion": "Oracle Academy",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276877:Diseno-de-Bases-de-Datos"
+  },
+  {
+    "titulo": "Infraestructura en Azure",
+    "institucion": "IT Colombia",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/382910:Infraestructura-en-Azure"
+  },
+  {
+    "titulo": "Ruta 3: Network (4 Cursos)",
+    "institucion": "Cisco",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/276661:Ruta-3-Network-4-Cursos"
+  },
+  {
+    "titulo": "Ruta 2: Lenguajes de Programación (2 Cursos)",
+    "institucion": "Cisco",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276658:Ruta-2-Lenguajes-de-Programacion-2-Cursos"
+  },
+  {
+    "titulo": "Curso en Creación y Diseño de Páginas Web",
+    "institucion": "Tec de Monterrey",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/382901:Curso-en-Creacion-y-Diseno-de-Paginas-Web"
+  },
+  {
+    "titulo": "Análisis de datos con Microsoft Power BI",
+    "institucion": "IT Colombia",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/382912:Analisis-de-datos-con-Microsoft-Power-BI"
+  },
+  {
+    "titulo": "Curso en Manejo del Sistema Windows y sus Utilerías",
+    "institucion": "Tec de Monterrey",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/382897:Curso-en-Manejo-del-Sistema-Windows-y-sus-Utilerias"
+  },
+  {
+    "titulo": "Ruta 4: English for IT - Partes I y II",
+    "institucion": "Cisco",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/276665:Ruta-4-English-for-IT-Partes-I-y-II"
+  },
+  {
+    "titulo": "Introducción al Mundo Computacional",
+    "institucion": "Tec de Monterrey",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276886:Introduccion-al-Mundo-Computacional"
+  },
+  {
+    "titulo": "Optimizar la productividad con Copilot para Microsoft 365",
+    "institucion": "IT Colombia",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/382909:Optimizar-la-productividad-con-Copilot-para-Microsoft-365"
+  },
+  {
+    "titulo": "Ruta 5: IA y Ciencia de Datos",
+    "institucion": "Cisco",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/400233:Ruta-5-IA-y-Ciencia-de-Datos"
+  },
+  {
+    "titulo": "Ruta 1: Ciberseguridad (4 Cursos)",
+    "institucion": "Cisco",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/276643:Ruta-1-Ciberseguridad-4-Cursos"
+  },
+  {
+    "titulo": "Aceleración del desarrollo de aplicaciones mediante GitHub Copilot",
+    "institucion": "Microsoft",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/400293:Aceleracion-del-desarrollo-de-aplicaciones-mediante-GitHub-Copilot"
+  },
+  {
+    "titulo": "Microsoft Power Platform Fundamentals",
+    "institucion": "IT Colombia",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/400280:Microsoft-Power-Platform-Fundamentals"
+  },
+  {
+    "titulo": "Prepare los datos para la IA con Microsoft Fabric",
+    "institucion": "Microsoft",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/400294:Prepare-los-datos-para-la-IA-con-Microsoft-Fabric"
+  },
+  {
+    "titulo": "Crear indicaciones eficaces para Microsoft 365 Copilot",
+    "institucion": "Microsoft",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/400292:Crear-indicaciones-eficaces-para-Microsoft-365-Copilot"
+  },
+  {
+    "titulo": "Inteligencia Artificial Para Todos: retos y el futuro de las tecnologías emergentes",
+    "institucion": "IBM",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/382895:Inteligencia-Artificial-Para-Todos-retos-y-el-futuro-de-las-tecnologias-emergentes"
+  },
+  {
+    "titulo": "Desarrolla soluciones de inteligencia artificial generativas con Azure OpenAI Service",
+    "institucion": "IT Colombia",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/382907:Desarrolla-soluciones-de-inteligencia-artificial-generativas-con-Azure-OpenAI-Service"
+  },
+  {
+    "titulo": "Ética en las Tic",
+    "institucion": "Tec de Monterrey",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/276888:Etica-en-las-Tic"
+  },
+  {
+    "titulo": "Java Foundations",
+    "institucion": "Oracle Academy",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276876:Java-Foundations"
+  },
+  {
+    "titulo": "Fortinet Certified Associate in Cybersecurity",
+    "institucion": "Fortinet",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/382903:Fortinet-Certified-Associate-in-Cybersecurity"
+  },
+  {
+    "titulo": "Comprendiendo el Internet",
+    "institucion": "Tec de Monterrey",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276887:Comprendiendo-el-Internet"
+  },
+  {
+    "titulo": "Oracle Cloud Infrastructure Foundations II – English",
+    "institucion": "Oracle Academy",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Inicio/404595:Oracle-Cloud-Infrastructure-Foundations-II-English"
+  },
+  {
+    "titulo": "Programación WEB Básica con HTML, CSS y JavaScript",
+    "institucion": "Tec de Monterrey",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276889:Programacion-WEB-Basica-con-HTML-CSS-y-JavaScript"
+  },
+  {
+    "titulo": "Programación de Bases de Datos con SQL",
+    "institucion": "Oracle Academy",
+    "url": "https://www.avanzatec.gov.co/portal/Secciones/Nuestra-oferta/276878:Programacion-de-Bases-de-Datos-con-SQL"
+  }
+]

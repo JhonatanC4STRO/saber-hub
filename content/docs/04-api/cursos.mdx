@@ -1,0 +1,158 @@
+---
+title: Cursos
+description: Endpoints para gestión de cursos, módulos, lecciones y recursos.
+---
+
+# API — Cursos
+
+## GET /api/cursos/catalogo
+
+Catálogo público de cursos publicados. No requiere autenticación.
+
+**Query params:** `?categoriaId=&institucionId=&q=`
+
+**Respuesta 200:**
+```json
+[{
+  "id": 1,
+  "titulo": "Introducción a Python",
+  "descripcion": "...",
+  "imagen": "https://res.cloudinary.com/...",
+  "instructor": { "nombre": "Carlos" },
+  "categoria": { "nombre": "Programación" },
+  "_count": { "inscripciones": 42 }
+}]
+```
+
+---
+
+## GET /api/cursos
+
+Lista de cursos del instructor autenticado.
+
+**Requiere:** rol `instructor` o `admin`
+
+---
+
+## POST /api/cursos
+
+Crear curso (borrador).
+
+**Body:**
+```json
+{
+  "titulo": "Mi Curso",
+  "descripcion": "...",
+  "categoriaId": 2,
+  "imagen": "https://..."
+}
+```
+
+**Respuesta 201:** `{ "id": 5, "titulo": "...", "estado": "borrador" }`
+
+---
+
+## GET /api/cursos/[id]
+
+Detalle de curso con módulos, lecciones e información de inscripción del usuario.
+
+---
+
+## PATCH /api/cursos/[id]
+
+Actualizar curso (título, descripción, imagen, estado, criterios de certificación).
+
+**Requiere:** ser el instructor del curso o admin.
+
+---
+
+## DELETE /api/cursos/[id]
+
+Eliminar curso. Solo si no tiene inscripciones activas.
+
+---
+
+## GET /api/cursos/[id]/contenido
+
+Obtener estructura completa: módulos → lecciones → recursos.
+
+---
+
+## POST /api/cursos/[id]/contenido
+
+Crear módulo o lección.
+
+**Body (módulo):**
+```json
+{ "tipo": "modulo", "titulo": "Módulo 1", "orden": 1 }
+```
+
+**Body (lección):**
+```json
+{
+  "tipo": "leccion",
+  "moduloId": 3,
+  "titulo": "Variables en Python",
+  "videoUrl": "https://youtube.com/...",
+  "contenidoTexto": "# Markdown content",
+  "duracionMinutos": 15,
+  "esPreview": false,
+  "esScorm": false
+}
+```
+
+---
+
+## GET /api/cursos/[id]/foro
+
+Mensajes del foro del curso.
+
+---
+
+## POST /api/cursos/[id]/foro
+
+Publicar mensaje en el foro.
+
+**Body:** `{ "contenido": "Pregunta sobre...", "citaId": null }`
+
+---
+
+## PATCH /api/cursos/[id]/foro/[msgId]/mod
+
+Moderar mensaje (fijar, bloquear). Requiere instructor o admin.
+
+---
+
+## POST /api/cursos/[id]/foro/[msgId]/like
+
+Reaccionar/quitar reacción a un mensaje.
+
+---
+
+## POST /api/progreso/heartbeat
+
+Registrar tiempo de conexión activo.
+
+**Body:** `{ "inscripcionId": 7 }`
+
+Incrementa `tiempoConectado += 15` en la inscripción. Llamar cada 15 segundos.
+
+---
+
+## POST /api/progreso/leccion
+
+Marcar lección como completada.
+
+**Body:** `{ "leccionId": 12, "cursoId": 3 }`
+
+Actualiza `ProgresoLeccion` y recalcula `Inscripcion.progreso`.
+
+---
+
+## POST /api/upload
+
+Subir archivo a Cloudinary.
+
+**Body:** `FormData` con campo `file`.
+
+**Respuesta 200:** `{ "url": "https://res.cloudinary.com/..." }`

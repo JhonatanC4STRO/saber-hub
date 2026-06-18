@@ -1,0 +1,75 @@
+---
+title: Modelos y relaciones
+description: Relaciones clave entre modelos en el esquema de SaberHub.
+---
+
+# Modelos y relaciones
+
+## Mapa de relaciones principales
+
+```
+Usuario ──────┬── Inscripcion ──── Curso ──────┬── Modulo ──── Leccion ──── Recurso
+              │                                 │
+              ├── IntentoExamen                 ├── Evaluacion ──── Pregunta ──── Opcion
+              │                                 │
+              ├── Certificacion                 ├── Foro ──── MensajeForo
+              │                                 │
+              └── MensajeInterno                └── SesionVideoconferencia
+
+Grupo ──────── MiembroGrupo (Usuario)
+        └───── AsignacionGrupoCurso (Curso)
+
+RutaFormacion ── CursoRuta (Curso)
+               └── CertificadoRuta
+
+FuenteExterna ── CursoExterno ── LogScraping
+```
+
+## Relaciones clave
+
+### Usuario → Inscripcion → Curso
+
+Un usuario puede estar inscrito en múltiples cursos. La inscripción almacena el progreso, tiempo conectado y estado.
+
+```ts
+const inscripcion = await prisma.inscripcion.findUnique({
+  where: { estudianteId_cursoId: { estudianteId, cursoId } },
+  include: { curso: { include: { modulos: { include: { lecciones: true } } } } },
+});
+```
+
+### Curso → Modulo → Leccion → Recurso
+
+Jerarquía de contenido. Un curso tiene N módulos ordenados, cada módulo tiene N lecciones, cada lección tiene N recursos adjuntos.
+
+### Evaluacion → Pregunta → Opcion
+
+Una evaluación pertenece a un curso (o módulo). Tiene N preguntas, cada pregunta de tipo `opcion_multiple` o `verdadero_falso` tiene N opciones.
+
+### IntentoExamen → RespuestaAprendiz
+
+Cada intento genera una respuesta por pregunta. Las de tipo `desarrollo` tienen `pendienteRevision = true` hasta calificación manual.
+
+### Grupo → AsignacionGrupoCurso → Inscripcion
+
+Al asignar un curso a un grupo, el sistema crea inscripciones masivas para todos los `MiembroGrupo` activos.
+
+### PrerrequisitoCurso
+
+```prisma
+model PrerrequisitoCurso {
+  cursoId         Int
+  prerequisitoId  Int
+  @@id([cursoId, prerequisitoId])
+}
+```
+
+El sistema verifica que el estudiante tenga `Inscripcion.estado = "finalizado"` en el prerrequisito antes de permitir inscripción.
+
+## Índices relevantes
+
+- `Usuario.email` — unique (login)
+- `Usuario.documento` — unique (identificación nacional)
+- `Inscripcion.(estudianteId, cursoId)` — unique (una inscripción por curso)
+- `Certificacion.codigoUnico` — unique (verificación pública)
+- `CursoExterno.cursoId` — unique (un curso externo → un curso interno)

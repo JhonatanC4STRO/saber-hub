@@ -1,0 +1,145 @@
+---
+title: SaberHub — Plataforma LMS de Aprendizaje
+description: Documentación oficial de SaberHub, la plataforma de gestión del aprendizaje (LMS) moderna construida con Next.js, Prisma y PostgreSQL.
+template: splash
+hero:
+  tagline: La plataforma de educación en línea de alto rendimiento respaldada por las mejores instituciones de Colombia.
+  image:
+    file: ../../assets/saberhub-hero.svg
+  actions:
+    - text: Guía de Inicio Rápido
+      link: /00-overview/guia-inicio/
+      icon: right-arrow
+      variant: primary
+    - text: Ver Arquitectura
+      link: /02-architecture/arquitectura/
+      icon: open-book
+      variant: secondary
+---
+
+import { Card, CardGrid, Badge, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## ¿Qué es SaberHub?
+
+**SaberHub** es una plataforma LMS (Learning Management System) moderna y de alto rendimiento, diseñada para la educación en línea **gratuita** y accesible. Construida sobre el ecosistema de **Next.js 16 con App Router**, ofrece una experiencia de aprendizaje completa para estudiantes, instructores e instituciones educativas.
+
+<CardGrid stagger>
+  <Card title="🔐 Autenticación Segura" icon="approve-check-circle">
+    Sistema JWT personalizado con cookies HttpOnly, bloqueo por fuerza bruta tras 5 intentos fallidos, verificación de email y recuperación de contraseña con tokens de un solo uso.
+  </Card>
+  <Card title="🎓 Gestión de Cursos" icon="open-book">
+    Crea y organiza cursos con módulos, lecciones, recursos multimedia, contenido SCORM y evaluaciones con banco de preguntas reutilizable.
+  </Card>
+  <Card title="📊 Reportes y Analíticas" icon="bars">
+    Panel administrativo con reportes filtrables por curso, grupo y fechas. Exportación a Excel (.xlsx) y PDF con paginación automática.
+  </Card>
+  <Card title="⏱️ Tracking en Tiempo Real" icon="rocket">
+    Heartbeat tracker que registra el tiempo de conexión del estudiante cada 15 segundos mediante pings asíncronos sin WebSocket.
+  </Card>
+  <Card title="🏛️ Gestión Institucional" icon="puzzle">
+    Soporte multi-institución con flujos de solicitud, aprobación de instructores, inscripción masiva y espacios colaborativos grupales.
+  </Card>
+  <Card title="📜 Certificaciones" icon="star">
+    Emisión automática de certificados verificables con código único, hash de verificación y exportación PDF con banner institucional.
+  </Card>
+</CardGrid>
+
+---
+
+## Stack Tecnológico
+
+<Tabs>
+  <TabItem label="Frontend">
+    | Tecnología | Versión | Uso |
+    |---|---|---|
+    | **Next.js** | `16.2.6` | Framework principal (App Router) |
+    | **React** | `19.2.4` | UI Components |
+    | **Tailwind CSS** | `^4` | Estilos utility-first |
+    | **Lucide React** | `^1.16.0` | Iconografía |
+    | **@dnd-kit** | `^6.3.1` | Drag & Drop (ordenamiento de módulos) |
+  </TabItem>
+  <TabItem label="Backend">
+    | Tecnología | Versión | Uso |
+    |---|---|---|
+    | **Next.js Route Handlers** | `16.2.6` | API REST endpoints |
+    | **Prisma ORM** | `^7.8.0` | Acceso a base de datos |
+    | **jose** | `^6.2.3` | Firma y verificación JWT |
+    | **bcryptjs** | `^3.0.3` | Hash seguro de contraseñas |
+    | **Nodemailer** | `^8.0.7` | Envío de emails SMTP |
+    | **Puppeteer** | `^24.0.0` | Automatización/Scraping |
+  </TabItem>
+  <TabItem label="Base de Datos & CDN">
+    | Tecnología | Versión | Uso |
+    |---|---|---|
+    | **PostgreSQL** | `>=14` | Base de datos relacional principal |
+    | **pg** | `^8.20.0` | Driver de conexión PostgreSQL |
+    | **@prisma/adapter-pg** | `^7.8.0` | Adaptador Prisma para pg |
+    | **Cloudinary** | `^2.10.0` | CDN para imágenes y videos HLS |
+  </TabItem>
+  <TabItem label="Exportación & Utilidades">
+    | Tecnología | Versión | Uso |
+    |---|---|---|
+    | **xlsx (SheetJS)** | `^0.18.5` | Generación de archivos Excel |
+    | **pdf-lib** | `^1.17.1` | Generación de PDF desde cero |
+    | **adm-zip** | `^0.5.17` | Manejo de archivos ZIP (SCORM) |
+    | **dotenv** | `^17.4.2` | Variables de entorno |
+    | **TypeScript** | `^5.9.3` | Tipado estático |
+  </TabItem>
+</Tabs>
+
+---
+
+## Roles del Sistema
+
+SaberHub maneja **4 roles** con permisos diferenciados:
+
+| Rol | Descripción |
+|---|---|
+| 🛡️ **Super Admin** | Acceso total a la plataforma: gestión de usuarios, instituciones, auditoría y configuración global. |
+| 🏛️ **Admin Institucional** | Administra su institución: cursos, instructores, grupos e inscripciones masivas. |
+| 👨‍🏫 **Instructor** | Crea y gestiona cursos, módulos, lecciones, evaluaciones y hace seguimiento de estudiantes. |
+| 🎓 **Estudiante** | Accede a cursos inscritos, realiza evaluaciones, participa en foros y obtiene certificados. |
+
+---
+
+## Módulos Principales
+
+<CardGrid>
+  <Card title="Autenticación" icon="approve-check-circle">
+    Login, registro, Google OAuth 2.0, verificación de email, recuperación de contraseña y auto-logout por inactividad.
+  </Card>
+  <Card title="Catálogo de Cursos" icon="open-book">
+    Exploración pública de cursos con filtros por categoría, institución y nivel. Soporte para cursos externos.
+  </Card>
+  <Card title="Dashboard" icon="laptop">
+    Panel personalizado por rol con métricas, notificaciones, mensajería interna y gestión de contenido.
+  </Card>
+  <Card title="Evaluaciones" icon="pencil">
+    Banco de preguntas reutilizable, tipos múltiple opción, V/F, respuesta corta y desarrollo con calificación manual.
+  </Card>
+  <Card title="Foros" icon="comment">
+    Foros por curso con respuestas anidadas, citas, reacciones y mensajes fijados/bloqueados.
+  </Card>
+  <Card title="Videoconferencias" icon="video">
+    Programación de sesiones en vivo con URL de reunión, duración estimada, grabación y estados de sesión.
+  </Card>
+</CardGrid>
+
+---
+
+## Rutas de Formación
+
+SaberHub implementa **Rutas de Formación** (`RutaFormacion`): colecciones ordenadas de cursos con prerrequisitos, que permiten a las instituciones diseñar itinerarios de aprendizaje completos con certificación al finalizar.
+
+---
+
+## Próximos Pasos
+
+<CardGrid>
+  <Card title="⚡ Comenzar ahora" icon="right-arrow">
+    Sigue la [Guía de Inicio](/00-overview/guia-inicio/) para configurar el proyecto localmente en minutos.
+  </Card>
+  <Card title="🏗️ Entender la arquitectura" icon="setting">
+    Revisa la [Arquitectura del sistema](/02-architecture/arquitectura/) para comprender los patrones y decisiones de diseño.
+  </Card>
+</CardGrid>

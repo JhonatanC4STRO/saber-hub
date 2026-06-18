@@ -1,0 +1,73 @@
+---
+title: Cabeceras de seguridad
+description: Cabeceras HTTP de seguridad configuradas en next.config.ts para SaberHub.
+---
+
+# Cabeceras de seguridad
+
+Configuradas en `next.config.ts` → `headers()` → aplican a todas las rutas (`/:path*`).
+
+## HSTS
+
+```
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+```
+
+Fuerza HTTPS durante 2 años. Incluye subdominios. Apta para HSTS preload list.
+
+## X-Frame-Options
+
+```
+X-Frame-Options: DENY
+```
+
+Prohíbe que la app sea embebida en `<iframe>` en cualquier origen. Previene clickjacking.
+
+## X-Content-Type-Options
+
+```
+X-Content-Type-Options: nosniff
+```
+
+Impide que el navegador infiera el MIME type. Previene ataques MIME sniffing.
+
+## Referrer-Policy
+
+```
+Referrer-Policy: strict-origin-when-cross-origin
+```
+
+Envía `Referer` completo en requests del mismo origen, solo el origen en cross-origin HTTPS.
+
+## Content-Security-Policy
+
+```
+default-src 'self';
+script-src 'self' 'unsafe-inline' 'unsafe-eval';
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+font-src 'self' https://fonts.gstatic.com;
+img-src 'self' data: https://images.unsplash.com https://res.cloudinary.com;
+frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com;
+media-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com;
+connect-src 'self';
+```
+
+**Orígenes permitidos por propósito:**
+
+| Directiva | Orígenes permitidos |
+|-----------|-------------------|
+| `script-src` | `self` (+ `unsafe-inline/eval` para Next.js) |
+| `style-src` | `self`, Google Fonts |
+| `font-src` | `self`, Google Fonts CDN |
+| `img-src` | `self`, Unsplash, Cloudinary |
+| `frame-src` | YouTube, Vimeo (embeds de lecciones) |
+| `connect-src` | Solo `self` (API propia) |
+
+> `unsafe-inline` y `unsafe-eval` en `script-src` son requeridos por Next.js internamente. En versiones futuras se puede migrar a nonces.
+
+## Mejoras futuras recomendadas
+
+- [ ] Migrar `unsafe-inline`/`unsafe-eval` a nonces o hashes CSP
+- [ ] Agregar `Permissions-Policy` para limitar APIs del browser
+- [ ] Configurar `Cross-Origin-Opener-Policy: same-origin`
+- [ ] Agregar `Cross-Origin-Resource-Policy: same-origin`

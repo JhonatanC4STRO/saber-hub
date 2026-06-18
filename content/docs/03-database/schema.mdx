@@ -1,0 +1,136 @@
+---
+title: Esquema Prisma
+description: Referencia del esquema completo de SaberHub con campos clave de cada modelo.
+---
+
+# Esquema Prisma
+
+Archivo: `prisma/schema.prisma`
+
+## Usuario
+
+```prisma
+model Usuario {
+  id               Int       @id @default(autoincrement())
+  nombre           String
+  email            String    @unique
+  passwordHash     String?
+  documento        String?   @unique
+  telefono         String?
+  imagen           String?
+  rolId            Int
+  institucionId    Int?
+  verificado       Boolean   @default(false)
+  activo           Boolean   @default(true)
+  // Brute force
+  intentosFallidos Int       @default(0)
+  bloqueadoHasta   DateTime?
+  // Actividad
+  ultimoAcceso     DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+```
+
+## Curso
+
+```prisma
+model Curso {
+  id              Int         @id @default(autoincrement())
+  titulo          String
+  descripcion     String?
+  imagen          String?
+  estado          EstadoCurso @default(borrador)
+  instructorId    Int
+  institucionId   Int?
+  categoriaId     Int?
+  // Criterios de certificación
+  leccionesMin    Int?
+  evalsAprobadas  Int?
+  notaGlobal      Float?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+```
+
+## Inscripcion
+
+```prisma
+model Inscripcion {
+  id               Int               @id @default(autoincrement())
+  estudianteId     Int
+  cursoId          Int
+  estado           EstadoInscripcion @default(activo)
+  progreso         Float             @default(0)
+  tiempoConectado  Int               @default(0)  // segundos (heartbeat)
+  ultimoAcceso     DateTime?
+  fechaInscripcion DateTime          @default(now())
+}
+```
+
+## Evaluacion
+
+```prisma
+model Evaluacion {
+  id              Int    @id @default(autoincrement())
+  titulo          String
+  cursoId         Int
+  moduloId        Int?
+  puntajeMinimo   Float  @default(70)
+  intentosMaximos Int?
+  ordenAleatorio  Boolean @default(false)
+  mostrarRespuestas Boolean @default(false)
+  duracionMinutos Int?
+}
+```
+
+## IntentoExamen
+
+```prisma
+model IntentoExamen {
+  id           Int           @id @default(autoincrement())
+  evaluacionId Int
+  estudianteId Int
+  estado       EstadoIntento @default(en_curso)
+  puntaje      Float?
+  iniciadoEn   DateTime      @default(now())
+  finalizadoEn DateTime?
+}
+```
+
+## CursoExterno
+
+```prisma
+model CursoExterno {
+  id              Int    @id @default(autoincrement())
+  titulo          String
+  descripcion     String?
+  fuenteNombre    String
+  fuenteUrl       String
+  codigoExterno   String?
+  urlOriginal     String
+  duracionHoras   Int?
+  nivel           String?
+  modalidad       String?
+  estado          String  @default("pendiente") // pendiente|aprobado|rechazado
+  institucionalId Int?
+  cursoId         Int?    @unique  // si se vincula a un curso interno
+  creadoEn        DateTime @default(now())
+}
+```
+
+## LogAuditoria
+
+```prisma
+model LogAuditoria {
+  id          Int      @id @default(autoincrement())
+  usuarioId   Int?
+  accion      String
+  tabla       String
+  registroId  Int?
+  datosAntes  Json?
+  datosDespues Json?
+  ip          String?
+  fecha       DateTime @default(now())
+}
+```

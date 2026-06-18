@@ -1,0 +1,92 @@
+---
+title: Webhooks
+description: Configuración y uso de webhooks para integrar sistemas externos con SaberHub.
+---
+
+# API — Webhooks
+
+Los webhooks permiten recibir notificaciones en tiempo real cuando ocurren eventos en SaberHub.
+
+## Eventos disponibles
+
+| Evento | Descripción |
+|--------|-------------|
+| `inscripcion.creada` | Estudiante inscrito en un curso |
+| `inscripcion.finalizada` | Estudiante completó el curso |
+| `evaluacion.enviada` | Intento de evaluación enviado |
+| `certificado.emitido` | Certificado emitido |
+| `certificado.revocado` | Certificado revocado |
+| `usuario.registrado` | Nuevo usuario registrado |
+
+## GET /api/webhooks
+
+Lista de webhooks configurados.
+
+**Requiere:** admin.
+
+---
+
+## POST /api/webhooks
+
+Crear webhook.
+
+**Body:**
+```json
+{
+  "url": "https://mi-sistema.com/webhook",
+  "eventos": "inscripcion.creada,certificado.emitido",
+  "secreto": "mi-secreto-hmac"
+}
+```
+
+---
+
+## PATCH /api/webhooks/[id]
+
+Actualizar URL, eventos o secreto del webhook.
+
+---
+
+## DELETE /api/webhooks/[id]
+
+Eliminar webhook.
+
+---
+
+## Payload de evento
+
+```json
+{
+  "evento": "certificado.emitido",
+  "timestamp": "2026-05-27T12:00:00Z",
+  "datos": {
+    "certificadoId": 42,
+    "codigoUnico": "SBHB-2026-00042",
+    "estudianteId": 7,
+    "cursoId": 3
+  }
+}
+```
+
+## Verificación de firma
+
+Cada request incluye cabecera `X-SaberHub-Signature`:
+
+```
+X-SaberHub-Signature: sha256=<hmac-hex>
+```
+
+Verificación en el receptor:
+
+```ts
+import { createHmac } from 'crypto';
+
+function verify(body: string, secret: string, signature: string): boolean {
+  const expected = `sha256=${createHmac('sha256', secret).update(body).digest('hex')}`;
+  return expected === signature;
+}
+```
+
+## Reintentos
+
+SaberHub reintenta el envío hasta 3 veces con backoff exponencial si el receptor retorna status >= 400 o no responde en 10 segundos.

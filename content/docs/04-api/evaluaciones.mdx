@@ -1,0 +1,149 @@
+---
+title: Evaluaciones
+description: Endpoints para gestión de evaluaciones, preguntas, intentos y banco de preguntas.
+---
+
+# API — Evaluaciones
+
+## GET /api/cursos/[id]/evaluaciones
+
+Lista de evaluaciones del curso.
+
+**Respuesta 200:**
+```json
+[{
+  "id": 1,
+  "titulo": "Examen final",
+  "puntajeMinimo": 70,
+  "intentosMaximos": 3,
+  "duracionMinutos": 60,
+  "_count": { "preguntas": 20 }
+}]
+```
+
+---
+
+## POST /api/cursos/[id]/evaluaciones
+
+Crear evaluación.
+
+**Requiere:** instructor del curso o admin.
+
+**Body:**
+```json
+{
+  "titulo": "Quiz Módulo 1",
+  "moduloId": 2,
+  "puntajeMinimo": 60,
+  "intentosMaximos": 2,
+  "ordenAleatorio": true,
+  "mostrarRespuestas": false,
+  "duracionMinutos": 30,
+  "preguntas": [
+    {
+      "enunciado": "¿Qué es una variable?",
+      "tipo": "opcion_multiple",
+      "opciones": [
+        { "texto": "Un contenedor de datos", "esCorrecta": true },
+        { "texto": "Una función", "esCorrecta": false }
+      ]
+    },
+    {
+      "enunciado": "Python es interpretado",
+      "tipo": "verdadero_falso",
+      "respuestaCorrecta": "true"
+    },
+    {
+      "enunciado": "Nombre del inventor de Python",
+      "tipo": "respuesta_corta",
+      "patronRegex": "guido|van rossum"
+    }
+  ]
+}
+```
+
+---
+
+## POST /api/cursos/[id]/evaluaciones/[evalId]/intentos
+
+Iniciar intento de evaluación.
+
+**Respuesta 201:**
+```json
+{
+  "intentoId": 42,
+  "preguntas": [...],  // shuffled if ordenAleatorio
+  "duracionMinutos": 30,
+  "iniciadoEn": "2026-05-27T..."
+}
+```
+
+---
+
+## GET /api/intentos/[intentoId]
+
+Obtener estado de un intento en curso.
+
+---
+
+## POST /api/intentos/[intentoId]/enviar
+
+Enviar y calificar intento.
+
+**Body:**
+```json
+{
+  "respuestas": [
+    { "preguntaId": 1, "opcionId": 3 },
+    { "preguntaId": 2, "respuestaTexto": "verdadero" },
+    { "preguntaId": 3, "respuestaTexto": "Guido van Rossum" }
+  ]
+}
+```
+
+**Respuesta 200:**
+```json
+{
+  "puntaje": 85.5,
+  "aprobado": true,
+  "pendienteRevisionManual": false,
+  "respuestas": [{ "preguntaId": 1, "correcta": true, "feedback": null }]
+}
+```
+
+---
+
+## PATCH /api/intentos/[intentoId]
+
+Calificar preguntas de desarrollo (instructor).
+
+**Body:**
+```json
+{
+  "calificaciones": [
+    { "respuestaId": 7, "puntaje": 90, "feedback": "Excelente análisis" }
+  ]
+}
+```
+
+---
+
+## GET /api/banco
+
+Banco de preguntas del instructor.
+
+**Query:** `?categoriaId=&tipo=`
+
+---
+
+## POST /api/banco
+
+Añadir pregunta al banco.
+
+**Body:** igual que pregunta en evaluación + `categoriaId`.
+
+---
+
+## PATCH /api/banco/[id]
+
+Actualizar pregunta del banco.

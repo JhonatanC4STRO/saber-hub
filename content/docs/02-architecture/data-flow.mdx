@@ -1,0 +1,110 @@
+---
+title: Flujo de datos
+description: Cómo fluyen los datos en los procesos clave de SaberHub.
+---
+
+# Flujo de datos
+
+## Autenticación
+
+```
+1. POST /api/auth/login
+   { email, password }
+   
+2. Servidor:
+   - Busca Usuario por email
+   - Verifica !bloqueadoHasta (brute force check)
+   - bcrypt.compare(password, passwordHash)
+   - Si falla: incrementa intentosFallidos; si >= 5 → bloqueadoHasta = now + 15min
+   - Si OK: resetea intentosFallidos, registra ultimoAcceso
+   - signToken({ id, email, rol }) → JWT HS256, 7 días
+   
+3. Respuesta:
+   - Set-Cookie: token=<jwt>; HttpOnly; Secure; SameSite=Lax; Path=/
+   - JSON: { user }
+```
+
+## Progreso (Heartbeat)
+
+```
+HeartbeatTracker (Client Component)
+  │  cada 15 segundos
+  ▼
+POST /api/progreso/heartbeat
+  { cursoId, inscripcionId }
+  
+Servidor:
+  - Verifica inscripción activa del usuario
+  - UPDATE Inscripcion SET tiempoConectado += 15, ultimoAcceso = now
+  - Retorna 200 OK
+```
+
+## Creación de curso
+
+```
+Instructor → /CrearCursos
+  ├── POST /api/cursos              → Curso (borrador)
+  ├── POST /api/cursos/[id]/contenido → Modulo + Leccion
+  ├── POST /api/cursos/[id]/evaluaciones → Evaluacion + Pregunta + Opcion
+  ├── POST /api/upload              → Cloudinary → URL almacenada en Recurso
+  └── PATCH /api/cursos/[id]       → estado: "publicado"
+```
+
+## Tomar evaluación
+
+```
+Estudiante → TomarEvaluacion
+  │
+  ├── POST /api/cursos/[id]/evaluaciones/[evalId]/intentos
+  │     → crea IntentoExamen { estado: "en_curso" }
+  │
+  ├── (responde preguntas en cliente)
+  │
+  └── POST /api/intentos/[intentoId]/enviar
+        { respuestas: [{ preguntaId, opcionId?, respuestaTexto? }] }
+        
+Servidor:
+  - Crea RespuestaAprendiz por cada respuesta
+  - Corrige automáticamente: opcion_multiple, verdadero_falso, respuesta_corta
+  - Marca pendienteRevision=true para tipo "desarrollo"
+  - Calcula puntaje (solo preguntas auto-corregidas)
+  - UPDATE IntentoExamen { estado: "finalizado"|"calificado", puntaje }
+  - Si puntaje >= puntajeMinimo Y !pendingReview → evalúa criterios de certificado
+```
+
+## Exportación de reportes
+
+```
+GET /api/reportes/exportar?format=xlsx&cursoId=X&fechaInicio=Y&fechaFin=Z
+
+Servidor:
+  - Consulta Inscripcion + ProgresoLeccion + IntentoExamen + Certificacion
+  - format=xlsx:
+    - xlsx.utils.json_to_sheet(rows)
+    - xlsx.utils.book_append_sheet(wb, ws, "Progreso")
+    - xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' })
+    - Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+  - format=pdf:
+    - PDFDocument.create()
+    - Dibuja banner SaberHub
+    - Filas con color alterno (zebra)
+    - Auto-paginación al llegar al límite de página (carta)
+    - Content-Type: application/pdf
+```
+
+## Scraping de cursos externos
+
+```
+Admin → POST /api/admin/scrapers/run
+  { fuenteId }
+
+Servidor:
+  1. Verifica FuenteExterna no bloqueada
+  2. robots-checker: isPathAllowed(siteUrl, targetPath)
+     - Si bloqueado por robots.txt → error 403
+  3. Puppeteer.launch() → page.goto(url)
+  4. page.evaluate() → extrae metadatos (título, descripción, URL, modalidad, nivel)
+  5. Crea/actualiza CursoExterno { estado: "pendiente" }
+  6. Crea LogScraping { cursosEncontrados, cursosNuevos, errores }
+  7. Admin revisa → PATCH /api/admin/cursos-externos/[id] { estado: "aprobado" }
+```

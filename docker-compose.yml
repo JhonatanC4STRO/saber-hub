@@ -1,0 +1,37 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - .env
+    environment:
+      # Sobrescribimos DATABASE_URL para apuntar al contenedor de base de datos 'db' en lugar de 'localhost'
+      - DATABASE_URL=postgresql://postgres:4339@db:5432/saberhub
+      # Habilitar polling para detectar cambios en Windows
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - db
+    # Espera a que la base de datos esté lista antes de aplicar migraciones e iniciar en modo dev
+    command: sh -c "until nc -z db 5432; do echo 'Esperando a la base de datos...'; sleep 1; done; npx prisma db push && npm run dev"
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=4339
+      - POSTGRES_DB=saberhub
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

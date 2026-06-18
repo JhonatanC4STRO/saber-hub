@@ -1,0 +1,348 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SABERHUB Core LMS API",
+    "description": "API REST robusta y estandarizada de SABERHUB para la integración de servicios educativos, automatización de inscripciones, reporte de progreso (SCORM), videoconferencias en vivo (Google Meet / Zoom) y webhooks transaccionales en tiempo real.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Servidor Local"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Iniciar Sesión",
+        "description": "Autenticar un usuario con sus credenciales y obtener una cookie JWT segura.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email", "example": "admin@saberhub.co" },
+                  "password": { "type": "string", "format": "password", "example": "Admin12345!" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Autenticación exitosa. Retorna el usuario y establece la cookie de sesión.",
+            "headers": {
+              "Set-Cookie": {
+                "schema": { "type": "string" },
+                "description": "Cookie 'token' JWT HTTPOnly con maxAge de 30 minutos."
+              }
+            }
+          },
+          "401": { "description": "Credenciales inválidas" }
+        }
+      }
+    },
+    "/cursos": {
+      "get": {
+        "summary": "Listar Cursos",
+        "description": "Obtener la lista de cursos filtrados por estado, categoría o institución.",
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["borrador", "publicado", "archivado"] },
+            "required": false
+          },
+          {
+            "name": "categoriaId",
+            "in": "query",
+            "schema": { "type": "string" },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listado de cursos obtenido exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Curso" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cursos/{id}/sesiones": {
+      "post": {
+        "summary": "Programar Videoconferencia",
+        "description": "Programar una nueva clase sincrónica por Zoom o Google Meet en un curso específico, notificando por SMTP a los estudiantes inscritos.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["titulo", "fechaInicio"],
+                "properties": {
+                  "titulo": { "type": "string", "example": "Introducción al Módulo Sincrónico" },
+                  "descripcion": {
+                    "type": "string",
+                    "example": "Resolveremos dudas sobre el estándar SCORM"
+                  },
+                  "fechaInicio": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2026-06-01T15:00:00Z"
+                  },
+                  "duracion": {
+                    "type": "integer",
+                    "example": 60,
+                    "description": "Duración estimada en minutos"
+                  },
+                  "plataforma": {
+                    "type": "string",
+                    "enum": ["meet", "zoom"],
+                    "default": "meet",
+                    "example": "zoom"
+                  },
+                  "urlReunion": {
+                    "type": "string",
+                    "description": "URL personalizada (opcional, si no se envía se autogenera una de Zoom/Meet)",
+                    "example": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Videoconferencia programada y notificada por correo exitosamente."
+          },
+          "401": { "description": "No autorizado" },
+          "403": { "description": "Permisos insuficientes" }
+        }
+      }
+    },
+    "/inscripciones": {
+      "post": {
+        "summary": "Inscribir Estudiantes",
+        "description": "Realizar auto-inscripción o inscripción de uno o varios estudiantes. Dispara el webhook `inscripcion.creada`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["cursoId", "usuarioIds"],
+                "properties": {
+                  "cursoId": { "type": "string", "example": "curso-cuid-123" },
+                  "usuarioIds": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "example": ["alumno-cuid-456"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Estudiantes inscritos exitosamente y webhook disparado." },
+          "400": { "description": "Prerrequisitos no cumplidos o parámetros faltantes" }
+        }
+      }
+    },
+    "/upload/scorm": {
+      "post": {
+        "summary": "Subir Paquete SCORM (ZIP)",
+        "description": "Sube y extrae de forma automática un paquete interactivo SCORM 1.2 o 2004 en el servidor, vinculándolo a una lección específica.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file", "leccionId"],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Paquete zip del SCORM"
+                  },
+                  "leccionId": {
+                    "type": "string",
+                    "description": "ID de la lección para vincularlo",
+                    "example": "leccion-cuid-789"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SCORM extraído de forma exitosa y archivo de lanzamiento identificado."
+          },
+          "403": { "description": "Rol de instructor no es dueño del curso o no es administrador." }
+        }
+      }
+    },
+    "/progreso/scorm": {
+      "get": {
+        "summary": "Obtener Progreso SCORM",
+        "description": "Obtener las variables CMI de seguimiento guardadas de un estudiante para un SCORM específico.",
+        "parameters": [
+          { "name": "leccionId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Progreso SCORM retornado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cmiData": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Guardar Progreso SCORM",
+        "description": "Sincroniza y guarda variables CMI (SCORM 1.2 o 2004). Si detecta estado completado/aprobado, completa automáticamente la lección del LMS y evalúa si otorga certificado. Si se otorga, dispara el webhook `certificacion.emitida`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["leccionId", "cmiData"],
+                "properties": {
+                  "leccionId": { "type": "string", "example": "leccion-cuid-789" },
+                  "cmiData": {
+                    "type": "object",
+                    "properties": {
+                      "cmi.core.lesson_status": {
+                        "type": "string",
+                        "enum": ["completed", "passed", "incomplete", "failed"]
+                      },
+                      "cmi.core.lesson_location": { "type": "string" },
+                      "cmi.completion_status": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Progreso guardado y sincronizado con el LMS." }
+        }
+      }
+    },
+    "/webhooks": {
+      "get": {
+        "summary": "Listar Webhooks",
+        "description": "Obtener todos los webhooks registrados en el sistema (Solo Administradores).",
+        "responses": {
+          "200": {
+            "description": "Lista de webhooks configurados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Webhook" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear Webhook",
+        "description": "Registrar un nuevo endpoint para recibir notificaciones en tiempo real del sistema. Firma con firma HMAC-SHA256 (Solo Administradores).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "eventos"],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://mi-sistema.com/webhooks"
+                  },
+                  "eventos": {
+                    "type": "string",
+                    "description": "Eventos separados por comas. Valores válidos: 'inscripcion.creada', 'certificacion.emitida'",
+                    "example": "inscripcion.creada,certificacion.emitida"
+                  },
+                  "secreto": {
+                    "type": "string",
+                    "description": "Opcional. Secreto para firma. Si se deja vacío se genera automáticamente."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Webhook registrado correctamente." }
+        }
+      }
+    },
+    "/webhooks/{id}": {
+      "delete": {
+        "summary": "Eliminar Webhook",
+        "description": "Eliminar una suscripción de webhook por su ID (Solo Administradores).",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Webhook eliminado exitosamente." },
+          "404": { "description": "Webhook no encontrado." }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Curso": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "titulo": { "type": "string" },
+          "descripcion": { "type": "string" },
+          "estado": { "type": "string" },
+          "imgPortada": { "type": "string" }
+        }
+      },
+      "Webhook": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "url": { "type": "string" },
+          "activo": { "type": "boolean" },
+          "eventos": { "type": "string" },
+          "secreto": { "type": "string" },
+          "creado": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+---
+title: Funcionalidades
+description: Lista completa de funcionalidades de la plataforma SaberHub.
+---
+
+# Funcionalidades
+
+## Gestión de cursos
+
+- Creación con asistente por pasos (módulos → lecciones → evaluaciones → configuración → publicar)
+- Soporte para SCORM (carga de paquetes zip, trazabilidad CMI)
+- Recursos adjuntos por lección: PDF, video, audio, imagen, presentación, enlace
+- Preview de lecciones para no inscritos
+- Estados: `borrador` | `publicado` | `archivado`
+- Prerrequisitos entre cursos
+
+## Seguimiento de progreso
+
+- Heartbeat cada 15 segundos → incrementa `tiempoConectado` en la inscripción
+- Marcado de lecciones completadas (`ProgresoLeccion`)
+- Progreso porcentual calculado automáticamente
+- Datos SCORM persistidos en `ProgresoScorm`
+
+## Sistema de evaluaciones
+
+| Tipo | Corrección |
+|------|-----------|
+| `opcion_multiple` | Automática |
+| `verdadero_falso` | Automática |
+| `respuesta_corta` | Automática (regex) |
+| `desarrollo` | Manual por instructor |
+
+- Intentos máximos configurables
+- Orden aleatorio de preguntas
+- Puntaje mínimo configurable (defecto 70)
+- Retroalimentación por instructor en respuestas manuales
+- Banco de preguntas con categorías reutilizables
+
+## Certificación
+
+- Certificado por curso con criterios: mínimo de lecciones, evaluaciones aprobadas, nota global
+- Certificado por ruta de formación
+- Código único + hash de verificación
+- PDF descargable
+- Estado: `emitido` | `revocado`
+- Verificación pública sin autenticación
+
+## Usuarios y roles
+
+| Rol | Capacidades principales |
+|-----|------------------------|
+| `estudiante` | Inscribirse, ver cursos, tomar evaluaciones, obtener certificados |
+| `instructor` | Crear/gestionar cursos, calificar evaluaciones, programar sesiones |
+| `admin_institucional` | Gestionar instructores de su institución, aprobar cursos |
+| `admin` | Acceso total: usuarios, instituciones, scraping, reportes, auditoría |
+
+## Seguridad y cumplimiento
+
+- Bloqueo de cuenta tras 5 intentos fallidos (15 min)
+- Verificación de email obligatoria
+- Recuperación de contraseña con token de 1 hora (un solo uso)
+- Google OAuth 2.0
+- Registro de auditoría completo (antes/después por acción)
+- Cabeceras de seguridad: HSTS, CSP, X-Frame-Options, Referrer-Policy
+
+## Notificaciones
+
+8 tipos configurables por usuario (email + in-app):
+
+`inscripcion` | `evaluacion` | `certificado` | `foro` | `mensaje` | `sistema` | `solicitud_instructor` | `sesion`
+
+## Webhooks
+
+Webhooks configurables con firma HMAC-SHA256 para integrar sistemas externos con eventos del LMS.

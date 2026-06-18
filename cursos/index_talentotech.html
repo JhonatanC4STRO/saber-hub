@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootcamps - Talento Tech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f8fafc;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .bg-custom-primary {
+            background-color: #3b82f6; /* Blue as default primary */
+        }
+    </style>
+</head>
+<body class="p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-4xl font-bold text-center text-blue-800 mb-2">Bootcamps Talento Tech 2.0</h1>
+        <p class="text-center text-gray-600 mb-10" id="contador">Cargando bootcamps...</p>
+
+        <div id="grid-bootcamps" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Las cards se inyectarán aquí mediante JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const categoriaColores = {
+            "Programación": "bg-purple-100 text-purple-800",
+            "Inteligencia Artificial": "bg-indigo-100 text-indigo-800",
+            "Análisis de Datos": "bg-green-100 text-green-800",
+            "Arquitectura en la Nube": "bg-sky-100 text-sky-800",
+            "Blockchain": "bg-yellow-100 text-yellow-800",
+            "Ciberseguridad": "bg-red-100 text-red-800"
+        };
+
+        async function cargarBootcamps() {
+            try {
+                const respuesta = await fetch('bootcamps_talentotech.json');
+                const bootcamps = await respuesta.json();
+                
+                const grid = document.getElementById('grid-bootcamps');
+                const contador = document.getElementById('contador');
+                
+                contador.innerText = `Se encontraron ${bootcamps.length} bootcamps de formación especializados`;
+
+                bootcamps.forEach(bootcamp => {
+                    const card = document.createElement('a');
+                    card.href = bootcamp.url;
+                    card.target = '_blank';
+                    card.className = "card bg-white rounded-xl p-6 border border-gray-200 transition-all duration-300 flex flex-col cursor-pointer";
+                    
+                    const colorClase = categoriaColores[bootcamp.categoria] || "bg-gray-100 text-gray-800";
+
+                    card.innerHTML = `
+                        <div class="flex-grow">
+                            <span class="inline-block px-3 py-1 ${colorClase} text-xs font-semibold rounded-full mb-3">${bootcamp.categoria}</span>
+                            <h2 class="text-xl font-bold text-gray-800 leading-tight mb-3">${bootcamp.titulo}</h2>
+                            <p class="text-gray-600 text-sm line-clamp-4">${bootcamp.descripcion}</p>
+                        </div>
+                        <div class="mt-5 pt-4 border-t border-gray-100 flex items-center text-blue-600 font-medium text-sm">
+                            Conocer más sobre la ruta
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Error al cargar los bootcamps:", error);
+                document.getElementById('contador').innerText = "Error al cargar los datos. Abre este archivo usando un servidor local (ej. Live Server).";
+            }
+        }
+
+        window.onload = cargarBootcamps;
+    </script>
+</body>
+</html>

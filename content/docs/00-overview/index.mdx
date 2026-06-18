@@ -1,0 +1,44 @@
+---
+title: Bienvenido a SaberHub
+description: Plataforma LMS de código abierto para educación gratuita en Colombia.
+---
+
+# SaberHub LMS
+
+**SaberHub** es una plataforma de gestión de aprendizaje (LMS) diseñada para democratizar la educación en Colombia, conectando estudiantes con cursos gratuitos de instituciones líderes como el SENA, universidades públicas y plataformas internacionales.
+
+## ¿Qué es SaberHub?
+
+SaberHub permite:
+
+- **Crear y publicar cursos** con módulos, lecciones, recursos y evaluaciones
+- **Inscribir estudiantes** y hacer seguimiento de su progreso en tiempo real
+- **Importar cursos externos** del SENA, Coursera, Khan Academy, edX y Miríada X
+- **Emitir certificados** verificables digitalmente para cursos y rutas de formación
+- **Gestionar instituciones** en un modelo multi-tenant
+
+## Stack tecnológico
+
+| Capa | Tecnología |
+|------|-----------|
+| Frontend / Backend | Next.js 16 (App Router) + React 19 |
+| Base de datos | PostgreSQL + Prisma ORM |
+| Autenticación | JWT (HS256) + Google OAuth 2.0 |
+| Archivos / Media | Cloudinary CDN |
+| Email | Nodemailer (SMTP Gmail) |
+| Scraping | Puppeteer + robots-parser |
+
+## Navegación rápida
+
+| Sección | Descripción |
+|---------|-------------|
+| [Producto](/docs/01-product) | Funcionalidades, roles de usuario |
+| [Arquitectura](/docs/02-architecture) | Diseño del sistema, flujo de datos |
+| [Base de datos](/docs/03-database) | Esquema Prisma, modelos |
+| [API](/docs/04-api) | Endpoints REST, autenticación |
+| [Frontend](/docs/05-frontend) | Componentes, páginas |
+| [Scraping](/docs/06-scraping) | Integración de cursos externos |
+| [Seguridad](/docs/07-security) | Auth, headers, auditoría |
+| [Despliegue](/docs/08-deployment) | Variables de entorno, Vercel |
+| [Desarrollo](/docs/09-development) | Setup local, pruebas |
+| [Legal](/docs/10-legal) | Privacidad, términos, scraping |

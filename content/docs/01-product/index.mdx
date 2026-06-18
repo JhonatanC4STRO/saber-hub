@@ -1,0 +1,50 @@
+---
+title: Producto
+description: Visión general del producto SaberHub y sus módulos principales.
+---
+
+# Producto SaberHub
+
+SaberHub es un LMS completo orientado a la educación gratuita. Combina gestión de cursos propios con importación de contenido externo validado.
+
+## Módulos principales
+
+### Catálogo y cursos
+
+Estudiantes acceden al catálogo público sin registrarse. Al inscribirse, pueden ver lecciones, descargar recursos, tomar evaluaciones y monitorear su avance con una barra de progreso.
+
+### Rutas de formación
+
+Cursos agrupados en secuencias lineales o flexibles. Al completar todos los cursos de una ruta, el sistema emite un certificado de ruta.
+
+### Evaluaciones
+
+Cuatro tipos de pregunta: opción múltiple, verdadero/falso, respuesta corta (validación regex) y desarrollo (calificación manual por instructor). Banco de preguntas reutilizable por categoría.
+
+### Certificados
+
+Cada certificado tiene un código único y un hash de verificación. Terceros pueden verificar autenticidad en `/certificados/verificar/[codigo]` sin necesitar cuenta.
+
+### Grupos y espacios colaborativos
+
+Administradores crean grupos (cohortes) con fechas de inicio/fin. Los grupos se asignan a cursos para inscripción masiva. Cada grupo tiene un workspace con avisos y archivos compartidos.
+
+### Foros y mensajería
+
+Cada curso tiene un foro con hilos, reacciones y moderación. La mensajería interna permite chats 1-a-1 y grupales con confirmaciones de lectura.
+
+### Sesiones de videoconferencia
+
+Instructores programan sesiones con URL de reunión (Zoom, Meet, etc.) y opcionalmente añaden grabaciones después.
+
+### Reportes y analítica
+
+Exportación a Excel o PDF con filtros por curso, grupo y rango de fechas. Datos incluyen progreso, tiempo conectado, notas de evaluaciones y certificados emitidos.
+
+### Gestión de instituciones
+
+Instituciones se registran, solicitan cursos y tienen un administrador institucional que gestiona instructores y aprobaciones de contenido.
+
+### Cursos externos
+
+El equipo administrador importa cursos del SENA, Coursera, edX, Khan Academy y Miríada X. El proceso requiere aprobación antes de publicar. Solo se almacenan metadatos, no archivos.

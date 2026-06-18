@@ -1,0 +1,105 @@
+---
+title: Configuración del entorno
+description: Configuración detallada del entorno de desarrollo local de SaberHub.
+---
+
+# Configuración del entorno
+
+## TypeScript
+
+Configurado en `tsconfig.json`:
+
+- Target: ES2017
+- Module: ESNext con `moduleResolution: bundler`
+- Strict mode activado
+- Path alias: `@/*` → `./*` (permite imports absolutos)
+
+```ts
+// Usar imports absolutos siempre
+import { source } from '@/app/source';
+import prisma from '@/lib/prisma';
+// No: import prisma from '../../lib/prisma';
+```
+
+## ESLint
+
+Configurado en `eslint.config.mjs`. Extiende `eslint-config-next`.
+
+```bash
+pnpm lint          # Verificar
+pnpm lint --fix    # Auto-corregir
+```
+
+## Prettier
+
+Configurado en `.prettierrc`.
+
+```bash
+pnpm format        # Formatear todo
+```
+
+## Variables de entorno locales
+
+Crear `.env` (no `.env.local`) — el proyecto usa `dotenv` directamente:
+
+```properties
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saberhub
+JWT_SECRET=<genera con crypto.randomBytes(32).toString('hex')>
+CLOUDINARY_URL=cloudinary://...
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu@gmail.com
+SMTP_PASS=xxxx xxxx xxxx xxxx
+SMTP_FROM="SaberHub Dev <tu@gmail.com>"
+SMTP_BLOCK_DEMO_EMAILS=true
+```
+
+## Crear usuario admin inicial
+
+```ts
+// scripts/create-admin.ts
+import prisma from './lib/prisma';
+import { hashPassword } from './lib/password';
+
+await prisma.usuario.create({
+  data: {
+    nombre: 'Admin',
+    email: 'admin@saberhub.local',
+    passwordHash: await hashPassword('Admin123!'),
+    verificado: true,
+    rol: { connect: { nombre: 'admin' } },
+  },
+});
+```
+
+```bash
+npx tsx scripts/create-admin.ts
+```
+
+## Hot reload con Prisma
+
+Si cambias el esquema de Prisma en desarrollo:
+
+```bash
+npx prisma db push   # Aplicar cambios sin migración
+npx prisma generate  # Regenerar tipos del cliente
+# Reiniciar pnpm dev si el servidor no recarga
+```
+
+## Depuración
+
+### Logs de Prisma
+
+```ts
+// lib/prisma.ts — añadir en desarrollo
+const prisma = new PrismaClient({
+  log: ['query', 'error', 'warn'],
+});
+```
+
+### Requests API con Thunder Client / Postman
+
+Importar `public/openapi.json` para tener todos los endpoints listos.
+
+También disponible en `/api-reference` con Swagger UI interactivo.

@@ -1,0 +1,82 @@
+---
+title: Componentes
+description: Catálogo de componentes React de SaberHub organizados por dominio.
+---
+
+# Componentes
+
+Directorio: `components/` — 53+ componentes en 9 categorías.
+
+## Auth
+
+| Componente | Ruta | Descripción |
+|-----------|------|-------------|
+| `AutoLogout` | `components/AutoLogout.jsx` | Detecta inactividad y redirige al login |
+| `Logout` | `components/Logout.jsx` | Botón de cierre de sesión |
+
+## Cursos (instructor)
+
+| Componente | Descripción |
+|-----------|-------------|
+| `GestorContenido` | Árbol de módulos y lecciones con drag & drop |
+| `ModulosEditor` | CRUD de módulos con reordenamiento |
+| `LeccionEditor` | Editor de lección: video, texto, recursos, SCORM |
+| `EvaluacionEditor` | Constructor de evaluaciones y preguntas |
+| `ConfiguracionEditor` | Metadata del curso (imagen, categoría, criterios) |
+| `PublicarCurso` | Revisión final y cambio de estado a `publicado` |
+| `MisCursos` | Lista de cursos del instructor |
+| `HeartbeatTracker` | Invisible; envía ping cada 15s a `/api/progreso/heartbeat` |
+
+## Estudiante
+
+| Componente | Descripción |
+|-----------|-------------|
+| `CatalogoCursos` | Grid de cursos con filtros |
+| `DetalleCursoClient` | Vista de detalle con botón de inscripción |
+| `VisorCurso` | Reproductor: sidebar de módulos + contenido |
+| `MisCursosEstudiante` | Cursos inscritos con progreso |
+| `ForoTab` | Hilo de foro con replies y reactions |
+| `SesionesTab` | Lista de sesiones próximas y grabaciones |
+
+## Evaluaciones
+
+| Componente | Descripción |
+|-----------|-------------|
+| `CrearEvaluacion` | Formulario de nueva evaluación |
+| `EditarEvaluacion` | Editar evaluación existente |
+| `TomarEvaluacion` | UI de examen con temporizador |
+| `CalificarManual` | Vista de calificación de preguntas desarrollo |
+| `BancoPreguntas` | Gestión del banco de preguntas por categoría |
+| `MisEvaluaciones` | Lista de intentos del estudiante |
+| `GestionEvaluaciones` | Vista admin de todos los intentos de un curso |
+
+## Certificados
+
+| Componente | Descripción |
+|-----------|-------------|
+| `MisCertificados` | Lista y descarga de certificados del estudiante |
+| `AdminCertificados` | Emisión manual y revocación por admin |
+
+## Admin
+
+| Componente | Descripción |
+|-----------|-------------|
+| `Auditoria` | Tabla de logs de auditoría con filtros |
+| `SolicitudesInstructor` | Revisión y aprobación de solicitudes |
+| `SolicitudesInstituciones` | Revisión de solicitudes de instituciones |
+| `CursosExternosPanel` | Gestión de cursos importados por scraping |
+| `CrearUsuario` | Formulario de alta manual de usuario |
+| `InscripcionMasivaNuevos` | Upload CSV para inscripción masiva |
+
+## Foro y sesiones
+
+| Componente | Descripción |
+|-----------|-------------|
+| `ForoClient` | Vista cliente del foro con threads y reactions |
+| `SesionesClient` | Calendario de sesiones y links de reunión |
+
+## Común
+
+| Componente | Descripción |
+|-----------|-------------|
+| `EmojiIcon` | Renderiza emoji como icono inline |

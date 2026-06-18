@@ -1,0 +1,49 @@
+# Dependency directories
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Environment files (CRITICAL SECURITY)
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Git repository
+.git/
+.github/
+
+# IDE configurations
+.idea/
+.vscode/
+
+# Local uploads and data
+uploads/
+
+# Build caches & tools configs
+.prettierrc
+eslint.config.mjs
+tsconfig.tsbuildinfo
+pnpm-lock.yaml
+CLAUDE.md
+AGENTS.md
+INSTITUCIONES_SETUP.md
+
+# Scratch/development files
+scratch/
+scratch-*.ts
+__tests__/
+
+# Docker configuration files
+Dockerfile
+.dockerignore

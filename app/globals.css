@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,5 +22,84 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+/* ═══════════════ ACCESIBILIDAD Y FOCO DE TECLADO (WCAG 2.1 AA) ═══════════════ */
+/* El foco se muestra con alto contraste y sigue los bordes redondeados del elemento */
+*:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.45) !important;
+}
+
+/* Evitar el contorno azul tosco al hacer clic con el mouse en botones, enlaces y elementos de navegación */
+*:focus:not(:focus-visible):not(input):not(textarea):not(select) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Utilidad para evitar anillos de foco no deseados en inputs incrustados en contenedores */
+.focus-none-important:focus,
+.focus-none-important:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Suavizar la navegación para lectores de pantalla y usuarios de teclado */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ═══════════════ ANIMACIONES DEL HOME ═══════════════ */
+
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #0f2257 70%, #0f172a 100%);
+  background-size: 300% 300%;
+  animation: gradient-shift 12s ease infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease forwards;
+  opacity: 0;
+}
+
+.animate-fade-up-delay-1 { animation-delay: 0.1s; }
+.animate-fade-up-delay-2 { animation-delay: 0.2s; }
+.animate-fade-up-delay-3 { animation-delay: 0.3s; }
+.animate-fade-up-delay-4 { animation-delay: 0.4s; }
+.animate-fade-up-delay-5 { animation-delay: 0.5s; }
+.animate-fade-up-delay-6 { animation-delay: 0.6s; }
+.animate-fade-up-delay-7 { animation-delay: 0.7s; }
+.animate-fade-up-delay-8 { animation-delay: 0.8s; }
+
+/* Barra inferior de CourseCard animada */
+.course-card-line {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.group:hover .course-card-line {
+  transform: scaleX(1);
 }

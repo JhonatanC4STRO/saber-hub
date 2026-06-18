@@ -1,0 +1,76 @@
+---
+title: Auditoría
+description: Sistema de logs de auditoría en SaberHub — qué se registra, cómo consultarlo.
+---
+
+# Auditoría
+
+SaberHub registra todas las acciones sensibles en la tabla `LogAuditoria`.
+
+## Modelo
+
+```prisma
+model LogAuditoria {
+  id           Int      @id @default(autoincrement())
+  usuarioId    Int?     // Quién realizó la acción (null = sistema)
+  accion       String   // Ej: "crear_usuario", "aprobar_curso", "revocar_certificado"
+  tabla        String   // Tabla afectada: "Usuario", "Curso", "Certificacion"
+  registroId   Int?     // ID del registro afectado
+  datosAntes   Json?    // Estado anterior (para updates/deletes)
+  datosDespues Json?    // Estado nuevo (para creates/updates)
+  ip           String?  // IP del request
+  fecha        DateTime @default(now())
+}
+```
+
+## Acciones registradas
+
+| Acción | Tabla | Descripción |
+|--------|-------|-------------|
+| `crear_usuario` | Usuario | Nuevo registro de usuario |
+| `editar_usuario` | Usuario | Cambio de datos o rol |
+| `eliminar_usuario` | Usuario | Baja de cuenta |
+| `publicar_curso` | Curso | Estado cambio a "publicado" |
+| `archivar_curso` | Curso | Estado cambio a "archivado" |
+| `aprobar_solicitud_instructor` | Usuario | Aprobación de solicitud |
+| `rechazar_solicitud_instructor` | Usuario | Rechazo de solicitud |
+| `aprobar_curso_externo` | CursoExterno | Aprobación de curso importado |
+| `revocar_certificado` | Certificacion | Revocación de certificado |
+| `bloquear_fuente` | FuenteExterna | Bloqueo de fuente de scraping |
+| `crear_grupo` | Grupo | Nuevo grupo/cohorte |
+| `inscripcion_masiva` | Inscripcion | Inscripción por asignación de grupo |
+
+## Consultar logs
+
+### API
+
+```
+GET /api/admin/auditoria
+  ?usuarioId=&accion=&tabla=&fechaInicio=&fechaFin=&page=1&limit=50
+```
+
+**Requiere:** rol `admin`.
+
+### UI
+
+Panel en `/dashboard/auditoria` con filtros y paginación.
+
+## Lectura de un log
+
+```json
+{
+  "id": 142,
+  "usuarioId": 1,
+  "accion": "revocar_certificado",
+  "tabla": "Certificacion",
+  "registroId": 8,
+  "datosAntes": { "estado": "emitido" },
+  "datosDespues": { "estado": "revocado", "motivo": "Irregularidad" },
+  "ip": "192.168.1.10",
+  "fecha": "2026-05-27T14:30:00Z"
+}
+```
+
+## Retención
+
+Los logs no se eliminan automáticamente. Para cumplimiento, se recomienda archivar logs > 2 años en almacenamiento frío (ej: exportar a CSV y eliminar de la DB).

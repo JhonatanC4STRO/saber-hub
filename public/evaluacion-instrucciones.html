@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SABERHUB — Instrucciones de Evaluación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ===========================
+       RESET & BASE
+    =========================== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        font-family: 'Inter', sans-serif;
+        background: #ffffff;
+        color: #111827;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ===========================
+       LAYOUT SHELL
+    =========================== */
+      .lms-shell {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* ===========================
+       HEADER
+    =========================== */
+      .lms-header {
+        height: 64px;
+        background: #ffffff;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 0;
+        flex-shrink: 0;
+        z-index: 10;
+      }
+
+      /* Brand */
+      .lms-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 240px;
+      }
+
+      .lms-logo {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+      }
+
+      .lms-logo-top {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e40af;
+        letter-spacing: 0.04em;
+      }
+
+      .lms-logo-bottom {
+        font-size: 10px;
+        font-weight: 500;
+        color: #6b7280;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .lms-logo-divider {
+        width: 1px;
+        height: 32px;
+        background: #e5e7eb;
+        margin: 0 4px;
+      }
+
+      .lms-course-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .lms-course-icon {
+        font-size: 16px;
+      }
+
+      .lms-course-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: #4b5563;
+        max-width: 280px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Center nav tabs */
+      .lms-header-nav {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .lms-nav-tab {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 20px;
+        height: 64px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        position: relative;
+        border: none;
+        background: transparent;
+        transition: color 0.15s;
+        text-decoration: none;
+      }
+
+      .lms-nav-tab:hover {
+        color: #374151;
+      }
+
+      .lms-nav-tab.active {
+        color: #1e40af;
+      }
+
+      .lms-nav-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #1e40af;
+      }
+
+      .lms-nav-tab .tab-icon {
+        font-size: 16px;
+      }
+
+      /* Right actions */
+      .lms-header-actions {
+        min-width: 240px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
+      .lms-close-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+        border: 1px solid #e5e7eb;
+        background: transparent;
+        color: #6b7280;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+
+      .lms-close-btn:hover {
+        background: #f3f4f6;
+        color: #374151;
+      }
+
+      /* ===========================
+       MAIN AREA (2 columns)
+    =========================== */
+      .lms-main {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      /* ===========================
+       LEFT COLUMN — OUTLINE
+    =========================== */
+      .lms-outline {
+        width: 280px;
+        flex-shrink: 0;
+        background: #ffffff;
+        border-right: 1px solid #f3f4f6;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* Outline tabs */
+      .outline-tabs {
+        display: flex;
+        border-bottom: 1px solid #f3f4f6;
+        flex-shrink: 0;
+      }
+
+      .outline-tab {
+        flex: 1;
+        padding: 12px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        position: relative;
+        transition: color 0.15s;
+      }
+
+      .outline-tab:hover {
+        color: #374151;
+      }
+
+      .outline-tab.active {
+        color: #1e40af;
+      }
+
+      .outline-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #1e40af;
+      }
+
+      /* Outline search */
+      .outline-search {
+        padding: 10px 12px;
+        border-bottom: 1px solid #f3f4f6;
+        flex-shrink: 0;
+      }
+
+      .outline-search-input {
+        width: 100%;
+        height: 32px;
+        padding: 0 10px 0 32px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        font-size: 12px;
+        font-family: 'Inter', sans-serif;
+        color: #374151;
+        background: #f9fafb
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E")
+          10px center / 14px no-repeat;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+
+      .outline-search-input:focus {
+        border-color: #1e40af;
+      }
+      .outline-search-input::placeholder {
+        color: #9ca3af;
+      }
+
+      /* Outline list */
+      .outline-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 8px 0;
+      }
+
+      .outline-list::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .outline-list::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 2px;
+      }
+
+      .outline-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        font-size: 13px;
+        font-weight: 400;
+        color: #374151;
+        cursor: pointer;
+        transition: background 0.1s;
+        position: relative;
+        line-height: 1.3;
+      }
+
+      .outline-item:hover {
+        background: #f9fafb;
+      }
+
+      .outline-item.completed {
+        color: #6b7280;
+      }
+
+      .outline-item.active {
+        background: #eff6ff;
+        border-left: 3px solid #1e40af;
+        padding-left: 13px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #1e40af;
+      }
+
+      .outline-item.locked {
+        color: #9ca3af;
+        cursor: default;
+      }
+      .outline-item.locked:hover {
+        background: transparent;
+      }
+
+      .outline-status {
+        flex-shrink: 0;
+        font-size: 13px;
+      }
+
+      .outline-status.check {
+        color: #16a34a;
+      }
+      .outline-status.lock {
+        color: #9ca3af;
+        font-size: 12px;
+      }
+
+      .outline-chevron {
+        color: #1e40af;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+
+      .outline-item-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .outline-item-lock {
+        margin-left: auto;
+        flex-shrink: 0;
+      }
+
+      .outline-section-header {
+        padding: 12px 16px 4px;
+        font-size: 10px;
+        font-weight: 600;
+        color: #9ca3af;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      /* ===========================
+       RIGHT COLUMN — CONTENT
+    =========================== */
+      .lms-content {
+        flex: 1;
+        overflow-y: auto;
+        background: #ffffff;
+        position: relative;
+        display: flex;
+      }
+
+      .lms-content::-webkit-scrollbar {
+        width: 6px;
+      }
+      .lms-content::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .lms-content::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 3px;
+      }
+
+      .content-inner {
+        flex: 1;
+        padding: 48px;
+        overflow-y: auto;
+      }
+
+      /* ===========================
+       EVALUATION INSTRUCTIONS
+    =========================== */
+      .eval-wrapper {
+        max-width: 720px;
+        margin: 0 auto;
+      }
+
+      /* Heading block */
+      .eval-eyebrow {
+        text-align: center;
+        font-size: 11px;
+        font-weight: 500;
+        color: #6b7280;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .eval-title {
+        text-align: center;
+        font-size: 32px;
+        font-weight: 700;
+        color: #111827;
+        line-height: 1.2;
+        margin-bottom: 8px;
+      }
+
+      .eval-subtitle {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 400;
+        color: #6b7280;
+        margin-bottom: 12px;
+      }
+
+      .eval-description {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 400;
+        color: #4b5563;
+        line-height: 1.5;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* ===========================
+       CONFIG CARD (stats grid)
+    =========================== */
+      .eval-card {
+        background: #ffffff;
+        border: 1px solid #f3f4f6;
+        border-radius: 4px;
+        border-bottom: 2px solid #1e40af;
+        margin-top: 32px;
+      }
+
+      .eval-config-card {
+        padding: 24px;
+      }
+
+      .eval-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+      }
+
+      .eval-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 16px;
+        position: relative;
+      }
+
+      .eval-stat + .eval-stat::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 10%;
+        height: 80%;
+        width: 1px;
+        background: #f3f4f6;
+      }
+
+      .eval-stat-icon {
+        font-size: 28px;
+        margin-bottom: 10px;
+        color: #1e40af;
+        line-height: 1;
+      }
+
+      /* Use SVG-based icons via background or text icons with color filter */
+      .stat-icon-svg {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 10px;
+        color: #1e40af;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .stat-icon-svg svg {
+        width: 32px;
+        height: 32px;
+        stroke: #1e40af;
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .eval-stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+
+      .eval-stat-label {
+        font-size: 13px;
+        font-weight: 400;
+        color: #6b7280;
+        text-align: center;
+      }
+
+      /* ===========================
+       INSTRUCTIONS CARD
+    =========================== */
+      .eval-instructions-card {
+        padding: 24px;
+        margin-top: 24px;
+      }
+
+      .instr-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .instr-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #1e40af;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-style: italic;
+        font-family: 'Inter', sans-serif;
+      }
+
+      .instr-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .instr-list {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .instr-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 400;
+        color: #4b5563;
+        line-height: 1.7;
+      }
+
+      .instr-list li::before {
+        content: '';
+        width: 5px;
+        height: 5px;
+        background: #1e40af;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 9px;
+      }
+
+      .instr-list li strong {
+        font-weight: 600;
+        color: #111827;
+      }
+
+      /* ===========================
+       ATTEMPT HISTORY CARD
+    =========================== */
+      .eval-attempts-card {
+        background: #f9fafb;
+        border: 1px solid #f3f4f6;
+        border-radius: 4px;
+        border-bottom: 2px solid #1e40af;
+        padding: 16px 20px;
+        margin-top: 24px;
+      }
+
+      .attempts-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: #6b7280;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .attempts-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .attempts-table td {
+        padding: 8px 0;
+        font-size: 13px;
+        color: #4b5563;
+        border-top: 1px solid #f3f4f6;
+      }
+
+      .attempts-table tr:first-child td {
+        border-top: none;
+      }
+
+      .attempts-table td:last-child {
+        text-align: right;
+      }
+
+      .attempt-label {
+        font-weight: 500;
+        color: #374151;
+      }
+
+      .attempt-date {
+        font-weight: 400;
+        color: #9ca3af;
+        margin-left: 6px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .badge-red {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+      }
+
+      .badge-green {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+      }
+
+      .attempts-remaining {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #f3f4f6;
+      }
+
+      .attempts-remaining strong {
+        color: #1e40af;
+        font-weight: 600;
+      }
+
+      /* ===========================
+       CTA BUTTON
+    =========================== */
+      .eval-cta {
+        margin-top: 32px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 48px;
+      }
+
+      .eval-start-btn {
+        height: 56px;
+        padding: 0 64px;
+        background: #1e40af;
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          transform 0.1s;
+        letter-spacing: 0.01em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .eval-start-btn:hover {
+        background: #1e3a8a;
+        transform: translateY(-1px);
+      }
+
+      .eval-start-btn:active {
+        transform: translateY(0);
+      }
+
+      .eval-cta-note {
+        font-size: 12px;
+        color: #9ca3af;
+        text-align: center;
+      }
+
+      /* ===========================
+       NEXT ARROW
+    =========================== */
+      .lms-next-arrow {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 80px;
+        background: #1e40af;
+        border-radius: 4px 0 0 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.15s;
+        flex-shrink: 0;
+      }
+
+      .lms-next-arrow:hover {
+        background: #1e3a8a;
+      }
+
+      .lms-next-arrow svg {
+        width: 20px;
+        height: 20px;
+        stroke: #ffffff;
+        stroke-width: 2.5;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* ===========================
+       RESPONSIVE
+    =========================== */
+      @media (max-width: 768px) {
+        .lms-outline {
+          display: none;
+        }
+
+        .lms-outline.mobile-visible {
+          display: flex;
+          position: fixed;
+          top: 64px;
+          left: 0;
+          bottom: 0;
+          z-index: 100;
+          box-shadow: 4px 0 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-outline-toggle {
+          display: flex !important;
+        }
+
+        .content-inner {
+          padding: 24px 16px;
+        }
+
+        .eval-title {
+          font-size: 24px;
+        }
+        .eval-subtitle {
+          font-size: 17px;
+        }
+
+        .eval-stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1px;
+          background: #f3f4f6;
+        }
+
+        .eval-stat {
+          background: #ffffff;
+          padding: 16px 8px;
+        }
+
+        .eval-stat + .eval-stat::before {
+          display: none;
+        }
+
+        .lms-course-name {
+          display: none;
+        }
+        .lms-logo-divider {
+          display: none;
+        }
+
+        .lms-next-arrow {
+          display: none;
+        }
+      }
+
+      /* Mobile toggle button */
+      .mobile-outline-toggle {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        height: 30px;
+        padding: 0 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        background: transparent;
+        font-size: 12px;
+        font-weight: 500;
+        color: #374151;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+        margin-right: 8px;
+      }
+
+      .mobile-outline-toggle:hover {
+        background: #f3f4f6;
+      }
+
+      /* Progress indicator */
+      .lms-progress-bar {
+        height: 3px;
+        background: #f3f4f6;
+        flex-shrink: 0;
+      }
+
+      .lms-progress-fill {
+        height: 100%;
+        background: #1e40af;
+        width: 42%;
+        transition: width 0.3s ease;
+      }
+
+      /* Tooltip on hover for locked items */
+      .outline-item.locked {
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="lms-shell">
+      <!-- ============================
+       PROGRESS BAR
+  ============================ -->
+      <div class="lms-progress-bar">
+        <div class="lms-progress-fill"></div>
+      </div>
+
+      <!-- ============================
+       HEADER
+  ============================ -->
+      <header class="lms-header">
+        <!-- Brand -->
+        <div class="lms-brand">
+          <div class="lms-logo">
+            <span class="lms-logo-top">SABERHUB</span>
+            <span class="lms-logo-bottom">Learning Platform</span>
+          </div>
+          <div class="lms-logo-divider"></div>
+          <div class="lms-course-info">
+            <span class="lms-course-icon">📖</span>
+            <span class="lms-course-name">Administración de Amenazas Cibernéticas...</span>
+          </div>
+        </div>
+
+        <!-- Center nav -->
+        <nav class="lms-header-nav">
+          <button class="mobile-outline-toggle" id="mobileToggleBtn" onclick="toggleOutline()">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+            Esquema
+          </button>
+          <a class="lms-nav-tab active" href="#">
+            <span class="tab-icon">📖</span>
+            Lección
+          </a>
+          <a class="lms-nav-tab" href="#">
+            <span class="tab-icon">📊</span>
+            Progreso
+          </a>
+        </nav>
+
+        <!-- Right actions -->
+        <div class="lms-header-actions">
+          <button class="lms-close-btn" title="Cerrar player">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- ============================
+       MAIN
+  ============================ -->
+      <div class="lms-main">
+        <!-- LEFT — COURSE OUTLINE -->
+        <aside class="lms-outline" id="courseOutline">
+          <!-- Tabs -->
+          <div class="outline-tabs">
+            <button class="outline-tab active">Esquema del curso</button>
+            <button class="outline-tab">Recursos</button>
+          </div>
+
+          <!-- Search -->
+          <div class="outline-search">
+            <input class="outline-search-input" type="text" placeholder="Buscar en el esquema..." />
+          </div>
+
+          <!-- List -->
+          <div class="outline-list">
+            <!-- MÓDULO 1 -->
+            <div class="outline-section-header">Módulo 1</div>
+
+            <div class="outline-item completed">
+              <span class="outline-status check">✓</span>
+              <span class="outline-item-text">1.1 ¿Qué es la ciberseguridad?</span>
+            </div>
+            <div class="outline-item completed">
+              <span class="outline-status check">✓</span>
+              <span class="outline-item-text">1.2 Vectores de ataque</span>
+            </div>
+            <div class="outline-item completed">
+              <span class="outline-status check">✓</span>
+              <span class="outline-item-text">1.3 Controles de seguridad</span>
+            </div>
+            <div class="outline-item completed">
+              <span class="outline-status check">✓</span>
+              <span class="outline-item-text">Examen Módulo 1</span>
+            </div>
+
+            <!-- MÓDULO 2 -->
+            <div class="outline-section-header">Módulo 2</div>
+
+            <div class="outline-item completed">
+              <span class="outline-status check">✓</span>
+              <span class="outline-item-text">2.1 Herramientas SIEM</span>
+            </div>
+            <div class="outline-item completed">
+              <span class="outline-status check">✓</span>
+              <span class="outline-item-text">2.2 Análisis de logs</span>
+            </div>
+            <div class="outline-item completed">
+              <span class="outline-status check">✓</span>
+              <span class="outline-item-text">Examen Módulo 2</span>
+            </div>
+
+            <!-- MÓDULO 3 — ACTIVO -->
+            <div class="outline-section-header">Módulo 3</div>
+
+            <div class="outline-item active">
+              <span class="outline-chevron">►</span>
+              <span class="outline-item-text">Examen Módulo 3: Gestión de Incidentes</span>
+            </div>
+
+            <!-- MÓDULO 4 — BLOQUEADO -->
+            <div class="outline-section-header">Módulo 4</div>
+
+            <div class="outline-item locked">
+              <span class="outline-item-text">4.1 Marcos normativos</span>
+              <span class="outline-item-lock">🔒</span>
+            </div>
+            <div class="outline-item locked">
+              <span class="outline-item-text">Examen Final</span>
+              <span class="outline-item-lock">🔒</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- RIGHT — CONTENT -->
+        <div class="lms-content" id="mainContent">
+          <div class="content-inner">
+            <div class="eval-wrapper">
+              <!-- HEADING BLOCK -->
+              <p class="eval-eyebrow">Módulo 3: Gestión de Incidentes &nbsp;·&nbsp; Evaluación</p>
+              <h1 class="eval-title">Comprueba tus habilidades</h1>
+              <p class="eval-subtitle">Gestión de Incidentes de Ciberseguridad</p>
+              <p class="eval-description">
+                Antes de continuar, responde estas preguntas para verificar cuánto has aprendido en
+                este módulo.
+              </p>
+
+              <!-- CONFIG CARD -->
+              <div class="eval-card eval-config-card">
+                <div class="eval-stats-grid">
+                  <!-- Tiempo -->
+                  <div class="eval-stat">
+                    <div class="stat-icon-svg">
+                      <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                    </div>
+                    <div class="eval-stat-value">30 min</div>
+                    <div class="eval-stat-label">Tiempo límite</div>
+                  </div>
+
+                  <!-- Preguntas -->
+                  <div class="eval-stat">
+                    <div class="stat-icon-svg">
+                      <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                      </svg>
+                    </div>
+                    <div class="eval-stat-value">15</div>
+                    <div class="eval-stat-label">Total de preguntas</div>
+                  </div>
+
+                  <!-- Intentos -->
+                  <div class="eval-stat">
+                    <div class="stat-icon-svg">
+                      <svg viewBox="0 0 24 24">
+                        <polyline points="23 4 23 10 17 10" />
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                      </svg>
+                    </div>
+                    <div class="eval-stat-value">3</div>
+                    <div class="eval-stat-label">Intentos disponibles</div>
+                  </div>
+
+                  <!-- Nota mínima -->
+                  <div class="eval-stat">
+                    <div class="stat-icon-svg">
+                      <svg viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </div>
+                    <div class="eval-stat-value">70%</div>
+                    <div class="eval-stat-label">Nota mínima para aprobar</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- INSTRUCTIONS CARD -->
+              <div class="eval-card eval-instructions-card">
+                <div class="instr-header">
+                  <div class="instr-icon">i</div>
+                  <span class="instr-title">Instrucciones</span>
+                </div>
+                <ul class="instr-list">
+                  <li>
+                    El examen tiene un tiempo límite de <strong>30 minutos</strong>. El tiempo
+                    empezará a correr cuando hagas clic en "Iniciar evaluación".
+                  </li>
+                  <li>
+                    Responde las preguntas con calma. Las de opción múltiple y Verdadero/Falso se
+                    califican automáticamente.
+                  </li>
+                  <li>
+                    Las preguntas de desarrollo serán revisadas manualmente por el instructor o
+                    tutor en un plazo de <strong>48 horas</strong>.
+                  </li>
+                  <li>
+                    Puedes navegar entre preguntas antes de enviar. Una vez enviado, no podrás
+                    cambiar tus respuestas.
+                  </li>
+                  <li>
+                    Si el tiempo se agota, el examen se enviará automáticamente con las respuestas
+                    hasta ese momento.
+                  </li>
+                  <li>
+                    Necesitas un mínimo de <strong>70 puntos</strong> sobre 100 para aprobar este
+                    módulo.
+                  </li>
+                  <li>
+                    Tienes <strong>3 intentos</strong> disponibles. Si repruebas, podrás reintentar
+                    luego de <strong>24 horas</strong>.
+                  </li>
+                </ul>
+              </div>
+
+              <!-- ATTEMPT HISTORY -->
+              <div class="eval-attempts-card">
+                <div class="attempts-title">Intentos anteriores</div>
+                <table class="attempts-table">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <span class="attempt-label">Intento 1</span>
+                        <span class="attempt-date">· 15 mar 2026</span>
+                      </td>
+                      <td>
+                        <span style="font-weight: 500; color: #374151; margin-right: 8px"
+                          >58 pts</span
+                        >
+                        <span class="badge badge-red">No aprobó</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="attempts-remaining">
+                  <strong>Intentos restantes: 2</strong> &nbsp;—&nbsp; Próximo intento disponible:
+                  16 mar 2026
+                </div>
+              </div>
+
+              <!-- CTA -->
+              <div class="eval-cta">
+                <button class="eval-start-btn" id="startEvalBtn" onclick="handleStartEval()">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                  </svg>
+                  Iniciar evaluación
+                </button>
+                <p class="eval-cta-note">Al iniciar, el temporizador comenzará inmediatamente.</p>
+              </div>
+            </div>
+            <!-- /eval-wrapper -->
+          </div>
+          <!-- /content-inner -->
+
+          <!-- NEXT ARROW -->
+          <div class="lms-next-arrow" title="Siguiente">
+            <svg viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </div>
+        </div>
+        <!-- /lms-content -->
+      </div>
+      <!-- /lms-main -->
+    </div>
+    <!-- /lms-shell -->
+
+    <script>
+      // ---- Mobile outline toggle ----
+      function toggleOutline() {
+        const outline = document.getElementById('courseOutline');
+        outline.classList.toggle('mobile-visible');
+      }
+
+      // Close outline when clicking outside on mobile
+      document.addEventListener('click', function (e) {
+        const outline = document.getElementById('courseOutline');
+        const toggleBtn = document.getElementById('mobileToggleBtn');
+        if (window.innerWidth <= 768 && outline.classList.contains('mobile-visible')) {
+          if (!outline.contains(e.target) && !toggleBtn.contains(e.target)) {
+            outline.classList.remove('mobile-visible');
+          }
+        }
+      });
+
+      // ---- Outline tab switching ----
+      document.querySelectorAll('.outline-tab').forEach((tab) => {
+        tab.addEventListener('click', function () {
+          document.querySelectorAll('.outline-tab').forEach((t) => t.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+
+      // ---- Header nav tab switching ----
+      document.querySelectorAll('.lms-nav-tab').forEach((tab) => {
+        tab.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelectorAll('.lms-nav-tab').forEach((t) => t.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+
+      // ---- Start evaluation button ----
+      function handleStartEval() {
+        const btn = document.getElementById('startEvalBtn');
+        btn.disabled = true;
+        btn.style.background = '#1E3A8A';
+        btn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Iniciando...
+    `;
+        setTimeout(() => {
+          btn.style.background = '#1E40AF';
+          btn.disabled = false;
+          btn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Iniciar evaluación
+      `;
+          alert('¡Evaluación iniciada! El temporizador ha comenzado.');
+        }, 1500);
+      }
+    </script>
+  </body>
+</html>

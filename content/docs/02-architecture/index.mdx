@@ -1,0 +1,74 @@
+---
+title: Arquitectura
+description: Diseño general del sistema SaberHub — capas, componentes y decisiones clave.
+---
+
+# Arquitectura del sistema
+
+SaberHub es un monolito Next.js con App Router. El mismo proceso sirve el frontend (React Server Components + Client Components) y el backend (Route Handlers en `app/api/`).
+
+## Diagrama de alto nivel
+
+```
+Browser
+  │
+  ▼
+Next.js App Router (app/)
+  ├── Pages (RSC + Client Components)
+  ├── API Routes (app/api/**)
+  │     ├── Auth (JWT HttpOnly cookie)
+  │     ├── Business Logic
+  │     └── Prisma ORM
+  │           └── PostgreSQL
+  ├── Cloudinary (uploads)
+  ├── Nodemailer (SMTP → Gmail)
+  └── Puppeteer (scraping → headless Chromium)
+```
+
+## Capas
+
+### Presentación
+
+- **Server Components** para páginas con datos (sin estado, sin JS en cliente)
+- **Client Components** (`'use client'`) para interactividad: editores, drag-and-drop, heartbeat, Swagger UI
+- Tailwind CSS v4 para estilos
+- `lucide-react` para iconografía
+
+### API (Route Handlers)
+
+Todos los endpoints viven en `app/api/`. Patrón estándar:
+
+1. Leer cookie JWT → `verifyToken()` → extraer usuario
+2. Validar rol (admin, instructor, etc.)
+3. Ejecutar lógica con Prisma
+4. Retornar JSON o binario (Excel/PDF)
+
+### Base de datos
+
+PostgreSQL gestionado con Prisma ORM. Adaptador `@prisma/adapter-pg` para conexión nativa con pool.
+
+### Autenticación
+
+JWT HS256 con expiración 7 días. Almacenado en cookie HttpOnly Secure SameSite=Lax. Sin refresh tokens; el usuario reautentica al expirar.
+
+### Archivos y media
+
+Cloudinary CDN para imágenes de cursos, avatares y recursos. El servidor sube el archivo vía SDK y almacena solo la URL pública en la base de datos.
+
+### Email
+
+Nodemailer con transporte SMTP. Plantillas HTML inline. Soporte para bloqueo de emails demo (`SMTP_BLOCK_DEMO_EMAILS`).
+
+### Scraping
+
+Puppeteer (headless Chromium) ejecutado en proceso Node.js en el servidor. Respeta `robots.txt` con caché de 1 hora. Solo almacena metadatos del curso, nunca descarga archivos.
+
+## Decisiones de diseño
+
+| Decisión | Razón |
+|----------|-------|
+| Monolito Next.js | Simplicidad de despliegue, un solo repo, no overhead de microservicios |
+| JWT sin refresh | Reduce complejidad; sesiones de 7 días aceptables para LMS |
+| Cloudinary en lugar de S3 | Transformaciones de imagen gratuitas, menor configuración |
+| Prisma ORM | Type-safety, migraciones declarativas, compatibilidad PostgreSQL |
+| Puppeteer server-side | Necesario para scraping de SPAs (SENA Sofia Plus) |

@@ -1,0 +1,78 @@
+---
+title: Despliegue
+description: Guía de despliegue de SaberHub en producción con Vercel y PostgreSQL.
+---
+
+# Despliegue
+
+SaberHub es una aplicación Next.js lista para desplegar en Vercel con base de datos PostgreSQL externa.
+
+## Requisitos previos
+
+- Node.js 20+
+- PostgreSQL 14+ (local o managed: Neon, Supabase, Railway, etc.)
+- Cuenta Cloudinary
+- App SMTP o Gmail con App Password
+- App Google OAuth (opcional, para SSO)
+
+## Pasos de despliegue
+
+### 1. Base de datos
+
+```bash
+# Crear base de datos
+createdb saberhub
+
+# Aplicar esquema
+npx prisma db push
+
+# O con migraciones en producción
+npx prisma migrate deploy
+```
+
+### 2. Variables de entorno
+
+Configura todas las vars en tu plataforma de hosting. Ver [Variables de entorno](/docs/08-deployment/env-vars) para referencia completa.
+
+### 3. Build
+
+```bash
+npm run build
+# o
+pnpm build
+```
+
+### 4. Start
+
+```bash
+npm start
+# o con PM2
+pm2 start npm --name "saberhub" -- start
+```
+
+## Vercel (recomendado)
+
+Ver [Despliegue en Vercel](/docs/08-deployment/vercel) para guía paso a paso.
+
+## Consideraciones de producción
+
+### Puppeteer en serverless
+
+Puppeteer requiere Chromium. En Vercel funciona en Functions con timeout adecuado. Si el scraping es frecuente, mover a un worker dedicado.
+
+### Pool de conexiones
+
+El `@prisma/adapter-pg` usa pool de conexiones nativo. En serverless (Vercel), limitar el pool:
+
+```ts
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 10,  // Máximo de conexiones
+});
+```
+
+Para serverless con muchas instancias, usar PgBouncer o Prisma Accelerate.
+
+### Cloudinary
+
+El plan gratuito de Cloudinary incluye 25GB de almacenamiento y 25GB de bandwidth/mes. Suficiente para proyectos medianos.

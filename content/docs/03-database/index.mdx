@@ -1,0 +1,76 @@
+---
+title: Base de datos
+description: Visión general del esquema PostgreSQL de SaberHub gestionado con Prisma ORM.
+---
+
+# Base de datos
+
+SaberHub usa **PostgreSQL** como motor de base de datos, accedido mediante **Prisma ORM** con el adaptador nativo `@prisma/adapter-pg`.
+
+## Resumen del esquema
+
+| Categoría | Modelos | Tablas |
+|-----------|---------|--------|
+| Usuarios y auth | Usuario, PasswordResetToken, VerificationToken, TokenInvitacionInstructor, TokenInvitacionAdmin | 5 |
+| Catálogos | Rol, Institucion, Categoria | 3 |
+| Cursos | Curso, Modulo, Leccion, Recurso | 4 |
+| Inscripciones | Inscripcion, ProgresoLeccion, ProgresoScorm | 3 |
+| Evaluaciones | Evaluacion, Pregunta, Opcion, IntentoExamen, RespuestaAprendiz | 5 |
+| Banco preguntas | CategoriaBanco, PreguntaBanco, OpcionBanco | 3 |
+| Certificados | Certificacion, CertificadoRuta | 2 |
+| Comunicación | Foro, MensajeForo, ReaccionForo, MensajeInterno, MensajeInternoLectura | 5 |
+| Notificaciones | Notificacion | 1 |
+| Sesiones | SesionVideoconferencia | 1 |
+| Grupos | Grupo, MiembroGrupo, AsignacionGrupoCurso, AvisoGrupo, ArchivoGrupo | 5 |
+| Rutas | RutaFormacion, CursoRuta, CertificadoRuta | 3 |
+| Prerrequisitos | PrerrequisitoCurso | 1 |
+| Scraping | FuenteExterna, CursoExterno, LogScraping | 3 |
+| Sistema | LogAuditoria, Webhook | 2 |
+
+**Total: ~46 tablas**
+
+## Enums (11)
+
+```prisma
+enum EstadoSolicitud     { pendiente en_revision aprobada rechazada }
+enum EstadoCurso         { borrador publicado archivado }
+enum EstadoModulo        { activo oculto }
+enum TipoRecurso         { pdf video audio imagen presentacion enlace otro }
+enum EstadoInscripcion   { activo inactivo finalizado retirado }
+enum TipoPregunta        { opcion_multiple verdadero_falso respuesta_corta desarrollo }
+enum EstadoIntento       { en_curso finalizado expirado calificado }
+enum EstadoCertificado   { emitido revocado }
+enum TipoNotificacion    { inscripcion evaluacion certificado foro mensaje sistema solicitud_instructor sesion }
+enum EstadoSesion        { programada en_curso finalizada cancelada }
+enum EstadoSolicitudInstitucion { pendiente en_revision pendiente_informacion aprobada rechazada }
+```
+
+## Configuración del cliente
+
+```ts
+// lib/prisma.ts
+import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+
+// Singleton en desarrollo, fresh instance en producción
+```
+
+## Comandos útiles
+
+```bash
+# Aplicar esquema a la DB (desarrollo sin migraciones)
+npx prisma db push
+
+# Generar migración
+npx prisma migrate dev --name descripcion
+
+# Abrir Prisma Studio
+npx prisma studio
+
+# Regenerar tipos del cliente
+npx prisma generate
+```

@@ -1,0 +1,75 @@
+---
+title: Cumplimiento robots.txt
+description: Implementación de la verificación de robots.txt en el sistema de scraping de SaberHub.
+---
+
+# Cumplimiento de robots.txt
+
+Archivo: `lib/robots-checker.ts`
+
+## Verificación antes de scraping
+
+Antes de cualquier navegación con Puppeteer, el sistema verifica que el path esté permitido según el archivo `robots.txt` de la fuente.
+
+```ts
+import { isPathAllowed, getCrawlDelay } from '@/lib/robots-checker';
+
+// Verificar permiso
+const allowed = await isPathAllowed('https://sofia.senasofiaplus.edu.co', '/cursos/');
+if (!allowed) {
+  throw new Error('robots.txt prohíbe el scraping de este path');
+}
+
+// Respetar Crawl-delay
+const delay = await getCrawlDelay('https://sofia.senasofiaplus.edu.co');
+if (delay) await new Promise(r => setTimeout(r, delay * 1000));
+```
+
+## Implementación
+
+```ts
+// lib/robots-checker.ts
+import robotsParser from 'robots-parser';
+
+const cache = new Map<string, { robots: ReturnType<typeof robotsParser>; expiry: number }>();
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hora
+
+export async function isPathAllowed(siteUrl: string, targetPath: string): Promise<boolean> {
+  const robots = await getRobots(siteUrl);
+  return robots.isAllowed(`${siteUrl}${targetPath}`, 'SaberHubBot') ?? true;
+}
+
+export async function getCrawlDelay(siteUrl: string): Promise<number | null> {
+  const robots = await getRobots(siteUrl);
+  return robots.getCrawlDelay('SaberHubBot') ?? null;
+}
+
+async function getRobots(siteUrl: string) {
+  const cached = cache.get(siteUrl);
+  if (cached && cached.expiry > Date.now()) return cached.robots;
+  
+  const res = await fetch(`${siteUrl}/robots.txt`);
+  const text = res.ok ? await res.text() : '';
+  const robots = robotsParser(`${siteUrl}/robots.txt`, text);
+  cache.set(siteUrl, { robots, expiry: Date.now() + CACHE_TTL_MS });
+  return robots;
+}
+```
+
+## User-Agent
+
+El scraper se identifica como `SaberHubBot`. Las fuentes pueden añadir reglas específicas para este agente en su `robots.txt`.
+
+## Fuentes bloqueadas (RL-05)
+
+Si una fuente constantemente bloquea el scraping o tiene políticas restrictivas, el admin puede marcar `FuenteExterna.bloqueado = true` con un motivo. El scraper rechaza ejecuciones para fuentes bloqueadas sin consultar `robots.txt`.
+
+## Responsabilidad legal
+
+SaberHub solo scrapea:
+- Sitios de educación **gratuita** y **pública**
+- Con `robots.txt` permisivo para el path de cursos
+- Solo extrae **metadatos** (título, descripción, URL, duración, nivel)
+- Nunca descarga archivos, videos ni PDFs
+
+Para fuentes con API oficial (Coursera, edX, Khan Academy), se prefiere la API sobre scraping.

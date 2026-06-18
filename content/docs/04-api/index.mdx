@@ -1,0 +1,48 @@
+---
+title: API REST
+description: Referencia completa de los endpoints REST de SaberHub (94 rutas).
+---
+
+# API REST
+
+Todos los endpoints son Route Handlers de Next.js en `app/api/`. Retornan JSON salvo los de exportación (binario).
+
+## Autenticación
+
+Requieren cookie `token` (JWT HttpOnly). Se establece al hacer login. Para endpoints públicos (verificar certificado, catálogo) no se requiere.
+
+```
+Cookie: token=<jwt>
+```
+
+Para endpoints de admin se verifica además `usuario.rol.nombre === 'admin'`.
+
+## Respuestas de error comunes
+
+| Status | Causa |
+|--------|-------|
+| `400` | Cuerpo o parámetros inválidos |
+| `401` | Sin token o token expirado |
+| `403` | Rol insuficiente |
+| `404` | Recurso no encontrado |
+| `409` | Conflicto (duplicado, ya inscrito, etc.) |
+| `500` | Error interno del servidor |
+
+## Resumen de rutas
+
+| Grupo | Rutas |
+|-------|-------|
+| [Autenticación](/docs/04-api/autenticacion) | 10 |
+| [Cursos](/docs/04-api/cursos) | 15+ |
+| [Evaluaciones](/docs/04-api/evaluaciones) | 8 |
+| [Certificados](/docs/04-api/certificados) | 6 |
+| [Reportes](/docs/04-api/reportes) | 3 |
+| [Webhooks](/docs/04-api/webhooks) | 4 |
+| Admin (usuarios, grupos, rutas, etc.) | 40+ |
+| Instituciones | 10 |
+| Mensajería | 4 |
+| Sesiones | 4 |
+| Upload | 2 |
+| Scraping | 8 |
+
+La documentación interactiva completa está disponible en [/api-reference](/api-reference) (Swagger UI / OpenAPI 3.0).

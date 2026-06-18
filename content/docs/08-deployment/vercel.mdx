@@ -1,0 +1,104 @@
+---
+title: Despliegue en Vercel
+description: Guía paso a paso para desplegar SaberHub en Vercel con base de datos externa.
+---
+
+# Despliegue en Vercel
+
+## Prerrequisitos
+
+1. Cuenta en [vercel.com](https://vercel.com)
+2. Base de datos PostgreSQL externa (Neon, Supabase, Railway)
+3. Variables de entorno listas
+
+## Pasos
+
+### 1. Importar repositorio
+
+En el dashboard de Vercel → "Add New Project" → importar desde GitHub.
+
+Framework detectado automáticamente: **Next.js**.
+
+### 2. Configurar variables de entorno
+
+En la configuración del proyecto → "Environment Variables" → añadir todas las vars de [Variables de entorno](/docs/08-deployment/env-vars).
+
+Variables mínimas para primer despliegue:
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `CLOUDINARY_URL`
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
+
+### 3. Aplicar migraciones de base de datos
+
+Antes del primer deploy (o después si hay migraciones nuevas):
+
+```bash
+npx prisma migrate deploy
+```
+
+O desde el panel de la DB (Neon, Supabase tienen interfaz SQL).
+
+### 4. Deploy
+
+```bash
+# Preview
+vercel
+
+# Producción
+vercel --prod
+```
+
+O push a `main` si el proyecto está conectado a GitHub con auto-deploy.
+
+## Consideraciones Vercel
+
+### Puppeteer
+
+Vercel Functions ejecutan en Node.js. Puppeteer necesita Chromium. Para evitar el tamaño del bundle:
+
+```bash
+npm install puppeteer-core @sparticuz/chromium-min
+```
+
+```ts
+import chromium from '@sparticuz/chromium-min';
+import puppeteer from 'puppeteer-core';
+
+const browser = await puppeteer.launch({
+  args: chromium.args,
+  executablePath: await chromium.executablePath(),
+  headless: chromium.headless,
+});
+```
+
+> Alternativa: mover el scraping a un servidor dedicado o cron job externo.
+
+### Timeout de funciones
+
+Los scrapers pueden tardar > 10 segundos. Configurar en `vercel.json` o `vercel.ts`:
+
+```ts
+// vercel.ts
+export const config = {
+  functions: {
+    'app/api/admin/scrapers/run/route.ts': {
+      maxDuration: 300,
+    },
+  },
+};
+```
+
+### Base de datos con Pool Bounce
+
+En producción serverless con muchas instancias concurrentes, el pool de conexiones puede agotarse. Opciones:
+
+- **Neon**: Tiene pooling integrado (agrega `?pgbouncer=true&connection_limit=1` a la URL)
+- **Supabase**: Transaction pooler en puerto 6543
+- **PgBouncer**: Autohospedado
+
+## Monitoreo
+
+- Vercel Analytics: automático para Core Web Vitals
+- Vercel Logs: logs de funciones en tiempo real
+- Prisma Accelerate: métricas de queries (opcional)

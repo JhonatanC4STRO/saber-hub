@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursos AvanzaTEC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f1f5f9;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-4xl font-bold text-center text-blue-900 mb-2">Oferta de Cursos AvanzaTEC</h1>
+        <p class="text-center text-gray-600 mb-10" id="contador">Cargando cursos...</p>
+
+        <div id="grid-cursos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Las cards se inyectarán aquí mediante JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        async function cargarCursos() {
+            try {
+                const respuesta = await fetch('cursos_avanzatec.json');
+                const cursos = await respuesta.json();
+                
+                const grid = document.getElementById('grid-cursos');
+                const contador = document.getElementById('contador');
+                
+                contador.innerText = `Se encontraron ${cursos.length} cursos disponibles`;
+
+                cursos.forEach(curso => {
+                    const card = document.createElement('a');
+                    card.href = curso.url;
+                    card.target = '_blank';
+                    card.className = "card bg-white rounded-xl p-6 border border-gray-200 transition-all duration-300 flex flex-col justify-between cursor-pointer";
+                    
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">AvanzaTEC</span>
+                                <span class="inline-block px-3 py-1 bg-gray-100 text-gray-800 text-xs font-bold rounded-md">${curso.institucion}</span>
+                            </div>
+                            <h2 class="text-lg font-bold text-gray-800 leading-snug mb-4">${curso.titulo}</h2>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex items-center text-blue-600 font-medium text-sm">
+                            Ver detalles del curso
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Error al cargar los cursos:", error);
+                document.getElementById('contador').innerText = "Error al cargar los cursos. Asegúrate de ejecutar esto en un servidor local.";
+            }
+        }
+
+        // Ejecutar al cargar la página
+        window.onload = cargarCursos;
+    </script>
+</body>
+</html>

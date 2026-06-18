@@ -1,0 +1,1147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum EstadoSolicitud {
+  pendiente
+  en_revision
+  aprobada
+  rechazada
+}
+
+enum EstadoCurso {
+  borrador
+  publicado
+  archivado
+}
+
+enum EstadoModulo {
+  activo
+  oculto
+}
+
+enum TipoRecurso {
+  pdf
+  video
+  audio
+  imagen
+  presentacion
+  enlace
+  otro
+}
+
+enum EstadoInscripcion {
+  activo
+  inactivo
+  finalizado
+  retirado
+}
+
+enum TipoPregunta {
+  opcion_multiple
+  verdadero_falso
+  respuesta_corta
+  desarrollo
+}
+
+enum EstadoIntento {
+  en_curso
+  finalizado
+  expirado
+  calificado
+}
+
+enum EstadoCertificado {
+  emitido
+  revocado
+}
+
+enum TipoNotificacion {
+  inscripcion
+  evaluacion
+  certificado
+  foro
+  mensaje
+  sistema
+  solicitud_instructor
+  sesion
+}
+
+enum EstadoSesion {
+  programada
+  en_curso
+  finalizada
+  cancelada
+}
+
+enum EstadoSolicitudInstitucion {
+  pendiente
+  en_revision
+  pendiente_informacion
+  aprobada
+  rechazada
+}
+
+// ============================================================
+// USUARIO
+// ============================================================
+
+model Usuario {
+  id               String    @id @default(cuid())
+  rolId            String    @map("rol_id")
+  institucionId    String?   @unique @map("institucion_id")
+  nombre           String
+  email            String    @unique
+  documento        String    @unique
+  passwordHash     String    @map("password_hash")
+  telefono         String?   @unique
+  imagen           String?                                          // avatar (URL)
+  activo           Boolean   @default(true)
+  verificado       Boolean   @default(false)                        // email verificado
+  ultimoLogin      DateTime? @map("ultimo_login")
+  intentosFallidos Int       @default(0) @map("intentos_fallidos")
+  bloqueadoHasta   DateTime? @map("bloqueado_hasta")
+  fechaRegistro    DateTime  @default(now()) @map("fecha_registro")
+  creado           DateTime  @default(now())
+  actualizado      DateTime  @default(now()) @updatedAt
+
+  // --- Relaciones ---
+  rol                  Rol                       @relation(fields: [rolId], references: [id], onDelete: Restrict)
+  institucion          Institucion?              @relation("AdminInstitucion", fields: [institucionId], references: [id], onDelete: SetNull)
+  cursosCreados        Curso[]                   @relation("InstructorCursos")
+  inscripciones        Inscripcion[]
+  intentosExamen       IntentoExamen[]
+  progresoLecciones    ProgresoLeccion[]
+  solicitudesEnviadas  SolicitudInstructor[]     @relation("Solicitante")
+  solicitudesRevisadas SolicitudInstructor[]     @relation("Revisor")
+  evaluacionesCreadas  Evaluacion[]              @relation("CreadorEvaluaciones")
+  mensajesForo         MensajeForo[]
+  mensajesEnviados     MensajeInterno[]          @relation("Remitente")
+  mensajesRecibidos    MensajeInterno[]          @relation("Destinatario")
+  reaccionesForo       ReaccionForo[]
+  lecturasMensajes     MensajeInternoLectura[]
+  notificaciones       Notificacion[]
+  sesionesCreadas      SesionVideoconferencia[]  @relation("CreadorSesiones")
+  logsAuditoria        LogAuditoria[]
+  passwordResets       PasswordResetToken[]
+  tokensVerificacion   VerificationToken[]
+  bancoCategorias      CategoriaBanco[]          @relation("BancoCategorias")
+  bancoPreguntas       PreguntaBanco[]           @relation("BancoPreguntas")
+  instructoresInvitados TokenInvitacionInstructor[] @relation("AdminInvitor")
+  gruposCreados        Grupo[]                   @relation("GrupoCreador")
+  gruposMiembro        MiembroGrupo[]
+  rutasCreadas         RutaFormacion[]
+  certificadosRuta     CertificadoRuta[]
+  progresoScorm        ProgresoScorm[]
+  comentariosLeccion   ComentarioLeccion[]
+
+  // --- Preferencias de Notificacion ---
+  prefEmailInscripcion  Boolean @default(true) @map("pref_email_inscripcion")
+  prefInAppInscripcion  Boolean @default(true) @map("pref_in_app_inscripcion")
+  prefEmailEvaluacion   Boolean @default(true) @map("pref_email_evaluacion")
+  prefInAppEvaluacion   Boolean @default(true) @map("pref_in_app_evaluacion")
+  prefEmailCertificado  Boolean @default(true) @map("pref_email_certificado")
+  prefInAppCertificado  Boolean @default(true) @map("pref_in_app_certificado")
+  prefEmailForo         Boolean @default(true) @map("pref_email_foro")
+  prefInAppForo         Boolean @default(true) @map("pref_in_app_foro")
+  prefEmailMensaje      Boolean @default(true) @map("pref_email_mensaje")
+  prefInAppMensaje      Boolean @default(true) @map("pref_in_app_mensaje")
+  prefEmailSesion       Boolean @default(true) @map("pref_email_sesion")
+  prefInAppSesion       Boolean @default(true) @map("pref_in_app_sesion")
+  prefEmailSolicitud    Boolean @default(true) @map("pref_email_solicitud")
+  prefInAppSolicitud    Boolean @default(true) @map("pref_in_app_solicitud")
+
+  // --- Relaciones de Espacios Colaborativos ---
+  avisosGrupo           AvisoGrupo[]
+  archivosGrupo         ArchivoGrupo[]
+
+  // --- Relaciones de Cursos Complementarios ---
+  logsClickExterno      LogClickExterno[]
+
+  @@index([rolId])
+  @@index([email])
+  @@index([institucionId])
+  @@map("usuarios")
+}
+
+// ============================================================
+// TOKENS DE RECUPERACION DE CONTRASEÑA (LH-33)
+// ============================================================
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  usuarioId String   @map("usuario_id")
+  expira    DateTime                             // 1 hora desde creacion
+  usado     Boolean  @default(false)             // tokens son one-time
+  creado    DateTime @default(now())
+
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([token])
+  @@map("password_reset_tokens")
+}
+
+// ============================================================
+// TOKENS DE VERIFICACION DE EMAIL (LH-33)
+// ============================================================
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  usuarioId String   @map("usuario_id")
+  expira    DateTime                             // 24 horas desde creacion
+  usado     Boolean  @default(false)
+  creado   DateTime @default(now())
+
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([token])
+  @@map("verification_tokens")
+}
+
+// ============================================================
+// 1. CATALOGOS
+// ============================================================
+
+model Rol {
+  id          String  @id @default(cuid())
+  nombre      String  @unique
+  descripcion String?
+
+  usuarios    Usuario[]
+
+  @@map("roles")
+}
+
+model Institucion {
+  id              String   @id @default(cuid())
+  nit             String?  @unique
+  nombre          String
+  descripcion     String?
+  url             String?
+  logoUrl         String?  @map("logo_url")
+  correoAdmin     String?  @map("correo_admin")
+  telefono        String?
+  solicitudId     String?  @unique @map("solicitud_id")
+  fechaCreacion   DateTime @default(now()) @map("fecha_creacion")
+  slug            String?  @unique
+
+  admin              Usuario?                    @relation("AdminInstitucion")
+  cursos             Curso[]
+  tokensInvitacion   TokenInvitacionAdmin[]
+  tokensInstructores TokenInvitacionInstructor[]
+  cursosExternos     CursoExterno[]
+
+  @@map("instituciones")
+}
+
+model Categoria {
+  id          String   @id @default(cuid())
+  nombre      String   @unique
+  descripcion String?
+
+  cursos      Curso[]
+
+  @@map("categorias")
+}
+
+// ============================================================
+// SOLICITUDES DE REGISTRO DE INSTITUCIÓN
+// ============================================================
+
+model SolicitudInstitucion {
+  id                  String                     @id @default(cuid())
+  nombreLegal         String                     @map("nombre_legal")
+  nit                 String                     @unique
+  descripcion         String
+  sitioWeb            String                     @map("sitio_web")
+  correoInstitucional String                     @map("correo_institucional")
+  nombreRepresentante String                     @map("nombre_representante")
+  telefono            String
+  logoUrl             String?                    @map("logo_url")
+  documentoUrl        String?                    @map("documento_url")
+  estado              EstadoSolicitudInstitucion @default(pendiente)
+  motivoRechazo       String?                    @map("motivo_rechazo")
+  revisadoPorId       String?                    @map("revisado_por_id")
+  fechaSolicitud      DateTime                   @default(now()) @map("fecha_solicitud")
+  fechaRevision       DateTime?                  @map("fecha_revision")
+
+  @@map("solicitudes_institucion")
+}
+
+// ============================================================
+// TOKENS DE INVITACIÓN PARA INSTRUCTORES
+// ============================================================
+
+model TokenInvitacionInstructor {
+  id            String      @id @default(cuid())
+  token         String      @unique
+  institucionId String      @map("institucion_id")
+  adminId       String      @map("admin_id")
+  correo        String
+  expira        DateTime
+  usado         Boolean     @default(false)
+  creado        DateTime    @default(now())
+
+  institucion   Institucion @relation(fields: [institucionId], references: [id], onDelete: Cascade)
+  admin         Usuario     @relation("AdminInvitor", fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([institucionId])
+  @@index([adminId])
+  @@map("tokens_invitacion_instructor")
+}
+
+// ============================================================
+// TOKENS DE INVITACIÓN PARA ADMIN INSTITUCIONAL
+// ============================================================
+
+model TokenInvitacionAdmin {
+  id            String      @id @default(cuid())
+  token         String      @unique
+  institucionId String      @map("institucion_id")
+  correo        String
+  expira        DateTime
+  usado         Boolean     @default(false)
+  creado        DateTime    @default(now())
+
+  institucion   Institucion @relation(fields: [institucionId], references: [id], onDelete: Cascade)
+
+  @@index([institucionId])
+  @@map("tokens_invitacion_admin")
+}
+
+// ============================================================
+// 2. SOLICITUDES PARA SER INSTRUCTOR
+// ============================================================
+
+model SolicitudInstructor {
+  id              String          @id @default(cuid())
+  usuarioId       String          @map("usuario_id")
+  estado          EstadoSolicitud @default(pendiente)
+  experiencia     String?
+  areasExperiencia String?        @map("areas_experiencia")
+  aniosExperiencia Int?           @map("anios_experiencia")
+  motivacion      String?
+  enlacePortafolio String?        @map("enlace_portafolio")
+  urlCurriculum   String?         @map("url_curriculum")
+  documentos      String?         @map("documentos")
+  motivoRechazo   String?         @map("motivo_rechazo")
+  fechaSolicitud  DateTime        @default(now()) @map("fecha_solicitud")
+  fechaRevision   DateTime?       @map("fecha_revision")
+  revisorId       String?         @map("revisor_id")
+
+  usuario         Usuario         @relation("Solicitante", fields: [usuarioId], references: [id], onDelete: Cascade)
+  revisor         Usuario?        @relation("Revisor", fields: [revisorId], references: [id], onDelete: SetNull)
+
+  @@index([usuarioId])
+  @@index([estado])
+  @@map("solicitudes_instructor")
+}
+
+// ============================================================
+// 3. CURSOS, MODULOS, LECCIONES, RECURSOS
+// ============================================================
+
+model Curso {
+  id             String       @id @default(cuid())
+  institucionId  String?      @map("institucion_id")
+  categoriaId    String?      @map("categoria_id")
+  instructorId   String       @map("instructor_id")
+  titulo         String
+  descripcion    String?
+  imgPortada     String?      @map("img_portada")
+  estado         EstadoCurso  @default(borrador)
+  otorgaCertificado    Boolean @default(false)
+  criterioLeccionesMin  Int?  @map("criterio_lecciones_min")
+  criterioEvalAprobadas Boolean @default(false) @map("criterio_eval_aprobadas")
+  criterioNotaGlobal    Int?  @map("criterio_nota_global")
+  nivel          String?
+  subtitulo      String?
+  subcategoria   String?
+  duracion       Int?
+  duracionUnidad String?      @map("duracion_unidad")
+  idioma         String?
+  objetivos      String[]
+  requisitos     String[]
+  tags           String[]
+  creado         DateTime     @default(now())
+  actualizado    DateTime     @default(now()) @updatedAt
+
+  institucion       Institucion?              @relation(fields: [institucionId], references: [id], onDelete: SetNull)
+  categoria         Categoria?                @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+  instructor        Usuario                   @relation("InstructorCursos", fields: [instructorId], references: [id], onDelete: Restrict)
+  modulos           Modulo[]
+  inscripciones     Inscripcion[]
+  evaluaciones      Evaluacion[]
+  foros             Foro[]
+  sesiones          SesionVideoconferencia[]
+  gruposAsignados   AsignacionGrupoCurso[]
+  prerrequisitosDe  PrerrequisitoCurso[]      @relation("CursoConPrerrequisito")
+  prerrequisitosPara PrerrequisitoCurso[]     @relation("CursoComoPrerrequisito")
+  rutas             CursoRuta[]
+  cursosExternos    CursoExterno[]
+
+  @@index([instructorId])
+  @@index([categoriaId])
+  @@index([estado])
+  @@map("cursos")
+}
+
+model Modulo {
+  id          String       @id @default(cuid())
+  cursoId     String       @map("curso_id")
+  orden       Int
+  titulo      String
+  descripcion String?
+  estado      EstadoModulo @default(activo)
+  creado      DateTime     @default(now())
+
+  curso        Curso         @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  lecciones    Leccion[]
+  evaluaciones Evaluacion[]
+
+  @@unique([cursoId, orden])
+  @@index([cursoId])
+  @@map("modulos")
+}
+
+model Leccion {
+  id              String    @id @default(cuid())
+  moduloId        String    @map("modulo_id")
+  orden           Int
+  titulo          String
+  contenidoTexto  String?   @map("contenido_texto")
+  urlVideo        String?   @map("url_video")
+  duracion        Int?
+  esPreview       Boolean   @default(false) @map("es_preview")
+  creado          DateTime  @default(now())
+
+  modulo            Modulo            @relation(fields: [moduloId], references: [id], onDelete: Cascade)
+  recursos          Recurso[]
+  progresoLecciones ProgresoLeccion[]
+  esScorm           Boolean           @default(false) @map("es_scorm")
+  scormUrl          String?           @map("scorm_url")
+  subtitulos        String?           @map("subtitulos")
+  progresoScorm     ProgresoScorm[]
+  comentarios       ComentarioLeccion[]
+
+  @@unique([moduloId, orden])
+  @@index([moduloId])
+  @@map("lecciones")
+}
+
+model Recurso {
+  id              String      @id @default(cuid())
+  leccionId       String      @map("leccion_id")
+  titulo          String
+  descripcion     String?
+  tipo            TipoRecurso
+  urlDocumento    String      @map("url_documento")
+  fechaCreacion   DateTime    @default(now()) @map("fecha_creacion")
+
+  leccion         Leccion     @relation(fields: [leccionId], references: [id], onDelete: Cascade)
+
+  @@index([leccionId])
+  @@map("recursos")
+}
+
+model ComentarioLeccion {
+  id         String   @id @default(cuid())
+  leccionId  String   @map("leccion_id")
+  usuarioId  String   @map("usuario_id")
+  padreId    String?  @map("padre_id")
+  contenido  String
+  creado     DateTime @default(now())
+
+  leccion    Leccion  @relation(fields: [leccionId], references: [id], onDelete: Cascade)
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  padre      ComentarioLeccion?  @relation("RespuestasComentario", fields: [padreId], references: [id], onDelete: Cascade)
+  respuestas ComentarioLeccion[] @relation("RespuestasComentario")
+
+  @@index([leccionId])
+  @@index([usuarioId])
+  @@map("comentarios_leccion")
+}
+
+// ============================================================
+// 4. INSCRIPCIONES Y PROGRESO
+// ============================================================
+
+model Inscripcion {
+  id                String             @id @default(cuid())
+  usuarioId         String             @map("usuario_id")
+  cursoId           String             @map("curso_id")
+  progreso          Decimal            @default(0) @db.Decimal(5, 2)
+  estado            EstadoInscripcion  @default(activo)
+  fechaInscripcion  DateTime           @default(now()) @map("fecha_inscripcion")
+  ultimoAcceso      DateTime?          @map("ultimo_acceso")
+  tiempoConectado   Int                @default(0) @map("tiempo_conectado")
+
+  usuario           Usuario            @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  curso             Curso              @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  certificacion     Certificacion?
+
+  @@unique([usuarioId, cursoId])
+  @@index([usuarioId])
+  @@index([cursoId])
+  @@map("inscripciones")
+}
+
+model ProgresoLeccion {
+  id              String    @id @default(cuid())
+  usuarioId       String    @map("usuario_id")
+  leccionId       String    @map("leccion_id")
+  completada      Boolean   @default(false)
+  fechaCompletada DateTime? @map("fecha_completada")
+
+  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  leccion         Leccion   @relation(fields: [leccionId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, leccionId])
+  @@index([usuarioId])
+  @@index([leccionId])
+  @@map("progreso_leccion")
+}
+
+// ============================================================
+// 5. EVALUACIONES, PREGUNTAS, OPCIONES, INTENTOS
+// ============================================================
+
+model Evaluacion {
+  id                  String    @id @default(cuid())
+  cursoId             String?   @map("curso_id")
+  moduloId            String?   @map("modulo_id")
+  creadorId           String    @map("creador_id")
+  titulo              String
+  descripcion         String?
+  puntajeMinimo       Int       @default(70) @map("puntaje_minimo")
+  duracionMinutos     Int?      @map("duracion_minutos")
+  intentosMaximos     Int       @default(1) @map("intentos_maximos")
+  ordenAleatorio      Boolean   @default(false) @map("orden_aleatorio")
+  mostrarRespuestas   Boolean   @default(false) @map("mostrar_respuestas")
+  fechaCreacion       DateTime  @default(now()) @map("fecha_creacion")
+  fechaActualizacion  DateTime  @default(now()) @updatedAt @map("fecha_actualizacion")
+
+  curso             Curso?            @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  modulo            Modulo?           @relation(fields: [moduloId], references: [id], onDelete: Cascade)
+  creador           Usuario           @relation("CreadorEvaluaciones", fields: [creadorId], references: [id], onDelete: Restrict)
+  preguntas         Pregunta[]
+  intentos          IntentoExamen[]
+
+  // Validar en aplicacion: cursoId O moduloId debe estar presente
+  @@index([cursoId])
+  @@index([moduloId])
+  @@map("evaluaciones")
+}
+
+model Pregunta {
+  id                 String        @id @default(cuid())
+  evaluacionId       String        @map("evaluacion_id")
+  pregunta           String
+  tipo               TipoPregunta
+  puntos             Int           @default(1)
+  orden              Int           @default(1)
+  respuestaCorrecta  String?       @map("respuesta_correcta")  // para respuesta_corta
+  patronRegex        String?       @map("patron_regex")         // regex alternativo para respuesta_corta
+
+  evaluacion          Evaluacion          @relation(fields: [evaluacionId], references: [id], onDelete: Cascade)
+  opciones            Opcion[]
+  respuestasAprendiz  RespuestaAprendiz[]
+
+  @@index([evaluacionId])
+  @@map("preguntas")
+}
+
+model Opcion {
+  id            String    @id @default(cuid())
+  preguntaId    String    @map("pregunta_id")
+  textoOpcion   String    @map("texto_opcion")
+  esCorrecta    Boolean   @default(false) @map("es_correcta")
+
+  pregunta            Pregunta            @relation(fields: [preguntaId], references: [id], onDelete: Cascade)
+  respuestasAprendiz  RespuestaAprendiz[]
+
+  @@index([preguntaId])
+  @@map("opciones")
+}
+
+model IntentoExamen {
+  id            String        @id @default(cuid())
+  usuarioId     String        @map("usuario_id")
+  evaluacionId  String        @map("evaluacion_id")
+  estado        EstadoIntento @default(en_curso)
+  puntaje       Decimal?      @db.Decimal(5, 2)
+  fechaInicio   DateTime      @default(now()) @map("fecha_inicio")
+  fechaFin      DateTime?     @map("fecha_fin")
+
+  usuario             Usuario             @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  evaluacion          Evaluacion          @relation(fields: [evaluacionId], references: [id], onDelete: Cascade)
+  respuestasAprendiz  RespuestaAprendiz[]
+
+  @@index([usuarioId])
+  @@index([evaluacionId])
+  @@map("intentos_examen")
+}
+
+model RespuestaAprendiz {
+  id                 String    @id @default(cuid())
+  intentoId          String    @map("intento_id")
+  preguntaId         String    @map("pregunta_id")
+  textoRespuesta     String?   @map("texto_respuesta")
+  opcionId           String?   @map("opcion_id")
+  calificacion       Decimal?  @db.Decimal(5, 2)
+  pendienteRevision  Boolean   @default(false) @map("pendiente_revision")  // true para tipo 'desarrollo'
+  feedbackInstructor String?   @map("feedback_instructor")
+
+  intento     IntentoExamen  @relation(fields: [intentoId], references: [id], onDelete: Cascade)
+  pregunta    Pregunta       @relation(fields: [preguntaId], references: [id], onDelete: Cascade)
+  opcion      Opcion?        @relation(fields: [opcionId], references: [id], onDelete: SetNull)
+
+  @@index([intentoId])
+  @@index([preguntaId])
+  @@map("respuestas_aprendiz")
+}
+
+// ============================================================
+// 6. CERTIFICACIONES
+// ============================================================
+
+model Certificacion {
+  id                String             @id @default(cuid())
+  inscripcionId     String             @unique @map("inscripcion_id")
+  codigoUnico       String             @unique @map("codigo_unico")
+  hashVerificacion  String             @map("hash_verificacion")
+  urlPdf            String?            @map("url_pdf")
+  estado            EstadoCertificado  @default(emitido)
+  motivoRevocacion  String?            @map("motivo_revocacion")
+  fechaEmision      DateTime           @default(now()) @map("fecha_emision")
+
+  inscripcion       Inscripcion        @relation(fields: [inscripcionId], references: [id], onDelete: Cascade)
+
+  @@index([codigoUnico])
+  @@map("certificaciones")
+}
+
+// ============================================================
+// 10. BANCO DE PREGUNTAS
+// ============================================================
+
+model CategoriaBanco {
+  id         String          @id @default(cuid())
+  nombre     String
+  creadorId  String          @map("creador_id")
+  creadoEn   DateTime        @default(now()) @map("creado_en")
+
+  creador    Usuario         @relation("BancoCategorias", fields: [creadorId], references: [id], onDelete: Cascade)
+  preguntas  PreguntaBanco[]
+
+  @@index([creadorId])
+  @@map("categorias_banco")
+}
+
+model PreguntaBanco {
+  id                String          @id @default(cuid())
+  creadorId         String          @map("creador_id")
+  categoriaId       String?         @map("categoria_id")
+  pregunta          String
+  tipo              TipoPregunta
+  puntos            Int             @default(1)
+  respuestaCorrecta String?         @map("respuesta_correcta")
+  patronRegex       String?         @map("patron_regex")
+  creadoEn          DateTime        @default(now()) @map("creado_en")
+  actualizadoEn     DateTime        @updatedAt    @map("actualizado_en")
+
+  creador    Usuario          @relation("BancoPreguntas", fields: [creadorId], references: [id], onDelete: Cascade)
+  categoria  CategoriaBanco?  @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+  opciones   OpcionBanco[]
+
+  @@index([creadorId])
+  @@index([categoriaId])
+  @@map("preguntas_banco")
+}
+
+model OpcionBanco {
+  id          String        @id @default(cuid())
+  preguntaId  String        @map("pregunta_id")
+  textoOpcion String        @map("texto_opcion")
+  esCorrecta  Boolean       @default(false) @map("es_correcta")
+
+  pregunta    PreguntaBanco @relation(fields: [preguntaId], references: [id], onDelete: Cascade)
+
+  @@index([preguntaId])
+  @@map("opciones_banco")
+}
+
+// ============================================================
+// 7. COMUNICACION: FOROS, MENSAJES, NOTIFICACIONES
+// ============================================================
+
+model Foro {
+  id          String   @id @default(cuid())
+  cursoId     String   @map("curso_id")
+  titulo      String
+  descripcion String?
+  creado      DateTime @default(now())
+
+  curso       Curso         @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  mensajes    MensajeForo[]
+
+  @@index([cursoId])
+  @@map("foros")
+}
+
+model MensajeForo {
+  id          String   @id @default(cuid())
+  foroId      String   @map("foro_id")
+  usuarioId   String   @map("usuario_id")
+  padreId     String?  @map("padre_id")
+  titulo      String?
+  contenido   String
+  fijado      Boolean  @default(false)
+  bloqueado   Boolean  @default(false)
+  creado      DateTime @default(now())
+  actualizado DateTime @default(now()) @updatedAt
+  categoria   String?
+
+  foro        Foro          @relation(fields: [foroId], references: [id], onDelete: Cascade)
+  usuario     Usuario       @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  padre       MensajeForo?  @relation("RespuestasForo", fields: [padreId], references: [id], onDelete: Cascade)
+  respuestas  MensajeForo[] @relation("RespuestasForo")
+  citaId      String?       @map("cita_id")
+  cita        MensajeForo?  @relation("CitasForo", fields: [citaId], references: [id], onDelete: SetNull)
+  citas       MensajeForo[] @relation("CitasForo")
+  reacciones  ReaccionForo[]
+
+  @@index([foroId])
+  @@index([usuarioId])
+  @@map("mensajes_foro")
+}
+
+model ReaccionForo {
+  id        String      @id @default(cuid())
+  mensajeId String      @map("mensaje_id")
+  usuarioId String      @map("usuario_id")
+  creado    DateTime    @default(now())
+  mensaje   MensajeForo @relation(fields: [mensajeId], references: [id], onDelete: Cascade)
+  usuario   Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([mensajeId, usuarioId])
+  @@map("reacciones_foro")
+}
+
+model MensajeInterno {
+  id              String    @id @default(cuid())
+  remitenteId     String    @map("remitente_id")
+  destinatarioId  String?   @map("destinatario_id")
+  grupoId         String?   @map("grupo_id")
+  asunto          String?
+  contenido       String
+  leido           Boolean   @default(false)
+  fechaEnvio      DateTime  @default(now()) @map("fecha_envio")
+  fechaLectura    DateTime? @map("fecha_lectura")
+
+  remitente     Usuario   @relation("Remitente", fields: [remitenteId], references: [id], onDelete: Cascade)
+  destinatario  Usuario?  @relation("Destinatario", fields: [destinatarioId], references: [id], onDelete: Cascade)
+  grupo         Grupo?    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  lecturas      MensajeInternoLectura[]
+
+  @@index([destinatarioId])
+  @@index([remitenteId])
+  @@index([grupoId])
+  @@map("mensajes_internos")
+}
+
+model MensajeInternoLectura {
+  id           String         @id @default(cuid())
+  mensajeId    String         @map("mensaje_id")
+  usuarioId    String         @map("usuario_id")
+  fechaLectura DateTime       @default(now()) @map("fecha_lectura")
+  mensaje      MensajeInterno @relation(fields: [mensajeId], references: [id], onDelete: Cascade)
+  usuario      Usuario        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([mensajeId, usuarioId])
+  @@map("mensajes_internos_lectura")
+}
+
+model Notificacion {
+  id          String            @id @default(cuid())
+  usuarioId   String            @map("usuario_id")
+  tipo        TipoNotificacion
+  titulo      String
+  contenido   String?
+  urlDestino  String?           @map("url_destino")
+  leida       Boolean           @default(false)
+  fechaEnvio  DateTime          @default(now()) @map("fecha_envio")
+
+  usuario     Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([leida])
+  @@map("notificaciones")
+}
+
+// ============================================================
+// 8. VIDEOCONFERENCIAS
+// ============================================================
+
+model SesionVideoconferencia {
+  id            String       @id @default(cuid())
+  cursoId       String       @map("curso_id")
+  creadorId     String       @map("creador_id")
+  titulo        String
+  descripcion   String?
+  urlReunion    String?      @map("url_reunion")
+  duracion      Int?         @map("duracion_estimada")
+  urlGrabacion  String?      @map("url_grabacion")
+  fechaInicio   DateTime     @map("fecha_inicio")
+  fechaFin      DateTime?    @map("fecha_fin")
+  estado        EstadoSesion @default(programada)
+  creado        DateTime     @default(now())
+
+  curso         Curso        @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  creador       Usuario      @relation("CreadorSesiones", fields: [creadorId], references: [id], onDelete: Restrict)
+
+  @@index([cursoId])
+  @@index([fechaInicio])
+  @@map("sesiones_videoconferencia")
+}
+
+// ============================================================
+// 9. AUDITORIA (LH-34)
+// ============================================================
+
+model LogAuditoria {
+  id            String    @id @default(cuid())
+  usuarioId     String?   @map("usuario_id")
+  accion        String
+  tabla         String?
+  registroId    String?   @map("registro_id")
+  datosAntes    String?   @map("datos_antes")
+  datosDespues  String?   @map("datos_despues")
+  ip            String?
+  fecha         DateTime  @default(now())
+
+  usuario       Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  @@index([usuarioId])
+  @@index([fecha])
+  @@index([accion])
+  @@map("logs_auditoria")
+}
+
+// ============================================================
+// GRUPOS Y COHORTES
+// ============================================================
+
+model Grupo {
+  id           String    @id @default(cuid())
+  nombre       String
+  descripcion  String?
+  fechaInicio  DateTime  @map("fecha_inicio")
+  fechaFin     DateTime? @map("fecha_fin")
+  activo       Boolean   @default(true)
+  creadorId    String    @map("creador_id")
+  creado       DateTime  @default(now())
+  actualizado  DateTime  @default(now()) @updatedAt
+
+  creador      Usuario   @relation("GrupoCreador", fields: [creadorId], references: [id], onDelete: Cascade)
+  miembros     MiembroGrupo[]
+  cursos       AsignacionGrupoCurso[]
+  mensajesMensajeInterno MensajeInterno[]
+  avisos       AvisoGrupo[]
+  archivos     ArchivoGrupo[]
+
+  @@index([creadorId])
+  @@map("grupos")
+}
+
+model MiembroGrupo {
+  id        String   @id @default(cuid())
+  grupoId   String   @map("grupo_id")
+  usuarioId String   @map("usuario_id")
+  creado    DateTime @default(now())
+
+  grupo     Grupo    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([grupoId, usuarioId])
+  @@index([grupoId])
+  @@index([usuarioId])
+  @@map("miembros_grupo")
+}
+
+model AsignacionGrupoCurso {
+  id        String   @id @default(cuid())
+  grupoId   String   @map("grupo_id")
+  cursoId   String   @map("curso_id")
+  creado    DateTime @default(now())
+
+  grupo     Grupo    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  curso     Curso    @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+
+  @@unique([grupoId, cursoId])
+  @@index([grupoId])
+  @@index([cursoId])
+  @@map("asignaciones_grupo_curso")
+}
+
+// ============================================================
+// PRERREQUISITOS Y RUTAS DE FORMACIÓN
+// ============================================================
+
+model PrerrequisitoCurso {
+  id              String   @id @default(cuid())
+  cursoId         String   @map("curso_id")
+  prerrequisitoId String   @map("prerrequisito_id")
+  creado          DateTime @default(now())
+
+  curso         Curso @relation("CursoConPrerrequisito", fields: [cursoId], references: [id], onDelete: Cascade)
+  prerrequisito Curso @relation("CursoComoPrerrequisito", fields: [prerrequisitoId], references: [id], onDelete: Cascade)
+
+  @@unique([cursoId, prerrequisitoId])
+  @@index([cursoId])
+  @@index([prerrequisitoId])
+  @@map("prerrequisitos_curso")
+}
+
+model RutaFormacion {
+  id          String   @id @default(cuid())
+  nombre      String
+  descripcion String?
+  imgPortada  String?  @map("img_portada")
+  lineal      Boolean  @default(true) // true = secuencia lineal estricta, false = flexible
+  creadorId   String   @map("creador_id")
+  creado      DateTime @default(now())
+  actualizado DateTime @default(now()) @updatedAt
+
+  creador      Usuario           @relation(fields: [creadorId], references: [id], onDelete: Cascade)
+  cursos       CursoRuta[]
+  certificados CertificadoRuta[]
+
+  @@index([creadorId])
+  @@map("rutas_formacion")
+}
+
+model CursoRuta {
+  id      String @id @default(cuid())
+  rutaId  String @map("ruta_id")
+  cursoId String @map("curso_id")
+  orden   Int    // Posición secuencial ordenada (1, 2, 3...)
+
+  ruta  RutaFormacion @relation(fields: [rutaId], references: [id], onDelete: Cascade)
+  curso Curso         @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+
+  @@unique([rutaId, cursoId])
+  @@unique([rutaId, orden])
+  @@index([rutaId])
+  @@index([cursoId])
+  @@map("cursos_ruta")
+}
+
+model CertificadoRuta {
+  id               String   @id @default(cuid())
+  usuarioId        String   @map("usuario_id")
+  rutaId           String   @map("ruta_id")
+  codigoUnico      String   @unique @map("codigo_unico")
+  hashVerificacion String   @map("hash_verificacion")
+  urlPdf           String?  @map("url_pdf")
+  fechaEmision     DateTime @default(now()) @map("fecha_emision")
+
+  usuario Usuario       @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  ruta    RutaFormacion @relation(fields: [rutaId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, rutaId])
+  @@index([codigoUnico])
+  @@map("certificados_ruta")
+}
+
+// ============================================================
+// ESPACIOS COLABORATIVOS DE GRUPO
+// ============================================================
+
+model AvisoGrupo {
+  id              String    @id @default(cuid())
+  grupoId         String    @map("grupo_id")
+  autorId         String    @map("autor_id")
+  titulo          String
+  contenido       String
+  creado          DateTime  @default(now())
+  fechaProgramada DateTime? @map("fecha_programada")
+  publicado       Boolean   @default(true)
+
+  grupo     Grupo    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  autor     Usuario  @relation(fields: [autorId], references: [id], onDelete: Cascade)
+
+  @@index([grupoId])
+  @@index([autorId])
+  @@map("avisos_grupo")
+}
+
+model ArchivoGrupo {
+  id        String   @id @default(cuid())
+  grupoId   String   @map("grupo_id")
+  autorId   String   @map("autor_id")
+  nombre    String
+  tipo      String   // e.g., 'pdf', 'video', 'imagen', 'otro'
+  url       String   // Cloudinary URL
+  peso      Int      // Size in bytes
+  version   Int      @default(1)
+  creado    DateTime @default(now())
+
+  grupo     Grupo    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  autor     Usuario  @relation(fields: [autorId], references: [id], onDelete: Cascade)
+
+  @@index([grupoId])
+  @@index([autorId])
+  @@map("archivos_grupo")
+}
+
+// ============================================================
+// SOPORTE SCORM (LH-40)
+// ============================================================
+
+model ProgresoScorm {
+  id          String    @id @default(cuid())
+  usuarioId   String    @map("usuario_id")
+  leccionId   String    @map("leccion_id")
+  cmiData     String    @map("cmi_data") // JSON serializado de variables cmi
+  creado      DateTime  @default(now()) @map("creado")
+  actualizado DateTime  @updatedAt @map("actualizado")
+
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  leccion     Leccion   @relation(fields: [leccionId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, leccionId])
+  @@map("progreso_scorm")
+}
+
+// ============================================================
+// FUENTES EXTERNAS E IMPORTACIÓN DE CURSOS (RL)
+// ============================================================
+
+// Registro de sitios externos — usado para la función de bloqueo (RL-05).
+// CursoExterno referencia fuenteNombre como string; la lógica de bloqueo
+// consulta esta tabla por nombre para filtrar cursos en el catálogo.
+model FuenteExterna {
+  id             String    @id @default(cuid())
+  nombre         String    @unique
+  urlBase        String    @map("url_base")
+  tieneApi       Boolean   @default(false) @map("tiene_api")
+  bloqueado      Boolean   @default(false)
+  motivoBloqueo  String?   @map("motivo_bloqueo")
+  fechaBloqueo   DateTime? @map("fecha_bloqueo")
+  creadoEn       DateTime  @default(now()) @map("creado_en")
+  actualizadoEn  DateTime  @updatedAt @map("actualizado_en")
+
+  @@map("fuentes_externas")
+}
+
+// Metadatos de cursos importados. RL-04: NO se almacenan videos, PDFs ni materiales.
+model CursoExterno {
+  id              String    @id @default(cuid())
+  titulo          String
+  descripcion     String?
+  fuenteUrl       String    @map("fuente_url")      // URL directa al curso original
+  fuenteNombre    String    @map("fuente_nombre")    // "SENA Sofia Plus", "Coursera", etc.
+  codigoExterno   String?   @unique @map("codigo_externo")  // código SENA u otro ID único
+  duracionHoras   Int?      @map("duracion_horas")
+  nivel           String?
+  modalidad       String?
+  idioma          String    @default("es")
+  imagenUrl       String?   @map("imagen_url")
+  fechaInicio     DateTime? @map("fecha_inicio")
+  fechaCierre     DateTime? @map("fecha_cierre")
+  estaActivo      Boolean   @default(true) @map("esta_activo")
+  areaConocimiento String?  @map("area_conocimiento")
+  centroFormacion  String?  @map("centro_formacion")
+  ciudad           String?
+  departamento     String?
+  estado           String    @default("pendiente")   // pendiente | aprobado | rechazado
+  esComplementario Boolean   @default(false) @map("es_complementario")
+  motivoRechazo    String?   @map("motivo_rechazo")
+  revisadoPorId    String?   @map("revisado_por_id")
+  revisadoEn       DateTime? @map("revisado_en")
+  institucionId   String    @map("institucion_id")
+  cursoId         String?   @map("curso_id")        // FK cuando es aprobado y vinculado
+  creadoEn        DateTime  @default(now()) @map("creado_en")
+  actualizadoEn   DateTime  @updatedAt @map("actualizado_en")
+
+  institucion     Institucion @relation(fields: [institucionId], references: [id], onDelete: Restrict)
+  curso           Curso?      @relation(fields: [cursoId], references: [id], onDelete: SetNull)
+
+  logsClickExterno LogClickExterno[]
+
+  @@index([fuenteNombre])
+  @@index([institucionId])
+  @@index([cursoId])
+  @@index([esComplementario])
+  @@map("cursos_externos")
+}
+
+// Log de cada ejecución del scraper (RF-05)
+model LogScraping {
+  id                 String   @id @default(cuid())
+  fuente             String
+  fechaEjecucion     DateTime @default(now()) @map("fecha_ejecucion")
+  cursosEncontrados  Int      @default(0) @map("cursos_encontrados")
+  cursosNuevos       Int      @default(0) @map("cursos_nuevos")
+  cursosActualizados Int      @default(0) @map("cursos_actualizados")
+  errores            Int      @default(0)
+  detalleErrores     String?  @map("detalle_errores")
+  exitoso            Boolean  @default(true)
+  duracionMs         Int?     @map("duracion_ms")
+
+  @@index([fuente])
+  @@index([fechaEjecucion])
+  @@map("logs_scraping")
+}
+
+// ============================================================
+// WEBHOOKS CONFIGURABLES (LH-42)
+// ============================================================
+
+model Webhook {
+  id          String    @id @default(cuid())
+  url         String
+  activo      Boolean   @default(true)
+  eventos     String    // Eventos separados por comas, ej. "inscripcion.creada,certificacion.emitida"
+  secreto     String?   // Clave secreta para firma HMAC-SHA256
+  creado      DateTime  @default(now()) @map("creado")
+  actualizado DateTime  @updatedAt @map("actualizado")
+
+  @@map("webhooks")
+}
+
+// ============================================================
+// LOG DE CLICKS EN CURSOS EXTERNOS (RF-05)
+// ============================================================
+
+model LogClickExterno {
+  id             String   @id @default(cuid())
+  usuarioId      String   @map("usuario_id")
+  cursoExternoId String   @map("curso_externo_id")
+  pantallaOrigen String   @map("pantalla_origen")  // "detalle_curso" | "dashboard" | "explorar"
+  creadoEn       DateTime @default(now()) @map("creado_en")
+
+  usuario      Usuario      @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  cursoExterno CursoExterno @relation(fields: [cursoExternoId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([cursoExternoId])
+  @@map("logs_click_externo")
+}
+

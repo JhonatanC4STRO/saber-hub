@@ -1,0 +1,110 @@
+[
+  {
+    "titulo": "Explorador (Básico) - Programación",
+    "categoria": "Programación",
+    "descripcion": "Aprende los fundamentos de la lógica, bucles, condicionales y tipos de datos con un lenguaje como JavaScript.",
+    "url": "https://talentotech2.com.co/bootcamps/#programacion"
+  },
+  {
+    "titulo": "Integrador (Intermedio) - Programación",
+    "categoria": "Programación",
+    "descripcion": "Aplica los fundamentos de la programación orientada a objetos con Java y que te llevarán hasta la creación de aplicaciones web dinámicas con las últimas tecnologías.",
+    "url": "https://talentotech2.com.co/bootcamps/#programacion"
+  },
+  {
+    "titulo": "Innovador (Avanzado) - Programación",
+    "categoria": "Programación",
+    "descripcion": "Implementa estrategias de seguridad en el código, esenciales para mitigar vulnerabilidades y proteger aplicaciones de amenazas potenciales",
+    "url": "https://talentotech2.com.co/bootcamps/#programacion"
+  },
+  {
+    "titulo": "Explorador (Básico) - Inteligencia Artificial",
+    "categoria": "Inteligencia Artificial",
+    "descripcion": "Conoce la historia y Ciclo de Vida de una aplicación de aprendizaje de Máquina, hasta la generación de datos sintéticos para la creación de modelos IA.",
+    "url": "https://talentotech2.com.co/bootcamps/#inteligencia-artificial"
+  },
+  {
+    "titulo": "Integrador (Intermedio) - Inteligencia Artificial",
+    "categoria": "Inteligencia Artificial",
+    "descripcion": "Aprende acerca de las aplicaciones para análisis de polaridad y sentimientos para el manejo de grandes volúmenes de datos.",
+    "url": "https://talentotech2.com.co/bootcamps/#inteligencia-artificial"
+  },
+  {
+    "titulo": "Innovador (Avanzado) - Inteligencia Artificial",
+    "categoria": "Inteligencia Artificial",
+    "descripcion": "Aplica técnicas avanzadas de visión artificial y procesamiento de lenguaje natural que permiten a las máquinas interpretar imágenes y entender el lenguaje humano.",
+    "url": "https://talentotech2.com.co/bootcamps/#inteligencia-artificial"
+  },
+  {
+    "titulo": "Explorador (Básico) - Análisis de Datos",
+    "categoria": "Análisis de Datos",
+    "descripcion": "Recolecta, organiza, limpia y visualiza datos usando herramientas básicas y Python.",
+    "url": "https://talentotech2.com.co/bootcamps/#analisis-datos"
+  },
+  {
+    "titulo": "Integrador (Intermedio) - Análisis de Datos",
+    "categoria": "Análisis de Datos",
+    "descripcion": "Aprende sobre regresión, correlación, modelos predictivos, análisis de series temporales y el uso de bases de datos y SQL.",
+    "url": "https://talentotech2.com.co/bootcamps/#analisis-datos"
+  },
+  {
+    "titulo": "Innovador (Avanzado) - Análisis de Datos",
+    "categoria": "Análisis de Datos",
+    "descripcion": "Realiza análisis predictivo, optimización, validación de modelos y manipulación avanzada de datos.",
+    "url": "https://talentotech2.com.co/bootcamps/#analisis-datos"
+  },
+  {
+    "titulo": "Explorador (Básico) - Arquitectura en la Nube",
+    "categoria": "Arquitectura en la Nube",
+    "descripcion": "Adquire competencias técnicas en arquitectura en la nube, la cual es una habilidad clave en el mercado laboral actual.",
+    "url": "https://talentotech2.com.co/bootcamps/#nube"
+  },
+  {
+    "titulo": "Integrador (Intermedio) - Arquitectura en la Nube",
+    "categoria": "Arquitectura en la Nube",
+    "descripcion": "Estudia técnicas avanzadas de la nube, aprendiendo a implementar y gestionar servicios complejos, a partir de proyectos desafiantes.",
+    "url": "https://talentotech2.com.co/bootcamps/#nube"
+  },
+  {
+    "titulo": "Innovador (Avanzado) - Arquitectura en la Nube",
+    "categoria": "Arquitectura en la Nube",
+    "descripcion": "Equípate con las habilidades necesarias para dominar las técnicas y métodos avanzados de seguridad en plataformas cloud.",
+    "url": "https://talentotech2.com.co/bootcamps/#nube"
+  },
+  {
+    "titulo": "Explorador (Básico) - Blockchain",
+    "categoria": "Blockchain",
+    "descripcion": "Aprende los principios fundamentales de cómo funciona, sus componentes principales, la criptografía básica y el mecanismo de consenso.",
+    "url": "https://talentotech2.com.co/bootcamps/#blockchain"
+  },
+  {
+    "titulo": "Integrador (Intermedio) - Blockchain",
+    "categoria": "Blockchain",
+    "descripcion": "Comprende de manera profunda el blockchain, permitiéndote resolver problemas, desarrollar contratos inteligentes y manejar herramientas y frameworks relevantes.",
+    "url": "https://talentotech2.com.co/bootcamps/#blockchain"
+  },
+  {
+    "titulo": "Innovador (Avanzado) - Blockchain",
+    "categoria": "Blockchain",
+    "descripcion": "Desarrolla habilidades para realizar transacciones e Inversión con Criptomonedas, Exchanges, Wallets y herramientas para el desarrollo de modelos de negocio de blockchain.",
+    "url": "https://talentotech2.com.co/bootcamps/#blockchain"
+  },
+  {
+    "titulo": "Explorador (Básico) - Ciberseguridad",
+    "categoria": "Ciberseguridad",
+    "descripcion": "Conoce los conceptos básicos de seguridad informática, tipos comunes de amenazas, ataques y prácticas esenciales.",
+    "url": "https://talentotech2.com.co/bootcamps/#ciberseguridad"
+  },
+  {
+    "titulo": "Integrador (Intermedio) - Ciberseguridad",
+    "categoria": "Ciberseguridad",
+    "descripcion": "Aprende sobre la gestión de riesgos, evaluación de vulnerabilidades, análisis forense digital, respuesta a incidentes y configuraciones de firewalls.",
+    "url": "https://talentotech2.com.co/bootcamps/#ciberseguridad"
+  },
+  {
+    "titulo": "Innovador (Avanzado) - Ciberseguridad",
+    "categoria": "Ciberseguridad",
+    "descripcion": "Diseña estrategias de seguridad a gran escala, gestionarás riesgos, dominarás técnicas avanzadas de criptografía.",
+    "url": "https://talentotech2.com.co/bootcamps/#ciberseguridad"
+  }
+]

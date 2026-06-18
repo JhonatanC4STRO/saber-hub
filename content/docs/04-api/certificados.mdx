@@ -1,0 +1,90 @@
+---
+title: Certificados
+description: Endpoints para emisión, verificación y descarga de certificados en SaberHub.
+---
+
+# API — Certificados
+
+## GET /api/certificados
+
+Lista de certificados del usuario autenticado (estudiante) o todos (admin).
+
+---
+
+## POST /api/certificados
+
+Emitir certificado. Verificado automáticamente al completar criterios del curso, o manualmente por admin.
+
+**Body:**
+```json
+{ "inscripcionId": 15 }
+```
+
+**Lógica de verificación:**
+1. `Inscripcion.progreso >= leccionesMin`
+2. Evaluaciones aprobadas >= `evalsAprobadas`
+3. Promedio de notas >= `notaGlobal`
+
+**Respuesta 201:**
+```json
+{
+  "id": 8,
+  "codigoUnico": "SBHB-2026-00042",
+  "hashVerificacion": "sha256:...",
+  "estado": "emitido",
+  "emitidoEn": "2026-05-27T..."
+}
+```
+
+---
+
+## GET /api/certificados/verificar/[codigo]
+
+Verificar autenticidad de certificado. **No requiere autenticación** (público).
+
+**Respuesta 200:**
+```json
+{
+  "valido": true,
+  "estudiante": "Ana García",
+  "curso": "Introducción a Python",
+  "emitidoEn": "2026-05-27",
+  "estado": "emitido"
+}
+```
+
+**Respuesta 404 o `valido: false`** si código no existe o fue revocado.
+
+---
+
+## GET /api/certificados/pdf/[codigo]
+
+Descargar PDF del certificado.
+
+**Respuesta:** `Content-Type: application/pdf`
+
+El PDF incluye:
+- Banner SaberHub
+- Nombre del estudiante
+- Nombre del curso
+- Fecha de emisión
+- Código único y QR de verificación
+- Firma institucional
+
+---
+
+## GET /api/certificados/ruta-pdf/[codigo]
+
+Descargar PDF de certificado de ruta de formación.
+
+---
+
+## PATCH /api/certificados/[id]/revocar
+
+Revocar certificado. **Requiere:** admin.
+
+**Body:** `{ "motivo": "Irregularidad en evaluaciones" }`
+
+**Respuesta 200:** `{ "estado": "revocado" }`
+
+El certificado permanece en base de datos para auditoría. La verificación pública retornará `valido: false`.

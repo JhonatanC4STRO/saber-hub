@@ -1,0 +1,83 @@
+---
+title: Roles de usuario
+description: Descripción detallada de los roles, permisos y flujos de registro en SaberHub.
+---
+
+# Roles de usuario
+
+## Roles disponibles
+
+### Estudiante
+
+Registro público en `/registro`. Requiere verificación de email.
+
+**Puede:**
+- Explorar el catálogo sin cuenta
+- Inscribirse en cursos gratuitos
+- Ver lecciones, descargar recursos
+- Tomar evaluaciones (respetando intentos máximos)
+- Obtener y descargar certificados
+- Participar en foros
+- Enviar mensajes internos
+
+### Instructor
+
+Registro mediante invitación del admin (`/registro-instructor`) o solicitud que el admin aprueba.
+
+**Puede:**
+- Todo lo del estudiante
+- Crear y publicar cursos
+- Editar módulos, lecciones, recursos de sus cursos
+- Crear y gestionar evaluaciones
+- Calificar preguntas de desarrollo
+- Programar sesiones de videoconferencia
+- Ver progreso de sus estudiantes
+
+**No puede:**
+- Gestionar usuarios
+- Emitir o revocar certificados manualmente
+- Acceder al panel de administración
+
+### Admin Institucional
+
+Creado por un admin general al aprobar la solicitud de una institución.
+
+**Puede:**
+- Todo lo del instructor
+- Gestionar instructores de su institución
+- Aprobar cursos de su institución
+- Invitar instructores vía token
+
+### Admin General
+
+Acceso total a la plataforma.
+
+**Puede:**
+- Gestionar todos los usuarios (CRUD)
+- Aprobar/rechazar solicitudes de instructor e institución
+- Gestionar grupos y rutas de formación
+- Configurar y ejecutar scrapers de cursos externos
+- Aprobar cursos externos importados
+- Ver logs de auditoría y scraping
+- Emitir y revocar certificados
+- Configurar webhooks
+- Exportar reportes
+
+## Flujos de registro
+
+```
+Estudiante:    /registro → verificar email → acceso
+Instructor:    solicitud → admin aprueba → token email → /registro-instructor
+Institución:  /instituciones → solicitud → admin aprueba → admin_institucional creado
+```
+
+## Recuperación de contraseña
+
+1. `/recuperar-contrasena` → ingresa email
+2. Email con token (1 hora, un solo uso)
+3. `/restablecer-contrasena?token=...` → nueva contraseña
+4. Token marcado como usado (no reutilizable)
+
+## Google OAuth
+
+Disponible en login y registro de estudiantes. El sistema fusiona la cuenta si el email ya existe verificado.

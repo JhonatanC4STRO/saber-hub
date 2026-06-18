@@ -1,0 +1,68 @@
+---
+title: Política de scraping
+description: Marco ético y legal del sistema de importación de cursos externos en SaberHub.
+---
+
+# Política de scraping ético
+
+SaberHub importa cursos de plataformas educativas externas para enriquecer su catálogo. Esta política define los principios que guían ese proceso.
+
+## Principios
+
+### RL-01 — Respeto a robots.txt
+
+Antes de cualquier scraping, verificamos el archivo `robots.txt` del sitio. Si el path está desautorizado para bots, no se scrapea.
+
+```
+User-agent: SaberHubBot
+# Si el sitio dice:
+Disallow: /cursos/
+# → SaberHub no scrapea /cursos/
+```
+
+### RL-02 — Respeto al Crawl-delay
+
+Si el `robots.txt` especifica un `Crawl-delay`, lo respetamos entre requests para no saturar el servidor del proveedor.
+
+### RL-03 — Solo educación gratuita y pública
+
+SaberHub solo importa cursos de plataformas de educación **gratuita** de acceso **público**. No se importan cursos de pago ni de plataformas privadas.
+
+### RL-04 — Solo metadatos, nunca archivos
+
+SaberHub almacena únicamente:
+- Título del curso
+- Descripción
+- URL de origen
+- Duración (si disponible)
+- Nivel
+- Modalidad
+
+**Nunca** se descargan ni almacenan videos, PDFs, presentaciones ni ningún archivo del curso original. Los estudiantes acceden al contenido en la plataforma original mediante el enlace.
+
+### RL-05 — Bloqueo de fuentes problemáticas
+
+Si una fuente prohíbe el scraping explícitamente, tiene robots.txt restrictivo, o contacta a SaberHub para solicitar exclusión, el administrador bloquea la fuente inmediatamente (`FuenteExterna.bloqueado = true`).
+
+## Fuentes actuales y su justificación
+
+| Fuente | Justificación |
+|--------|---------------|
+| SENA Sofia Plus | Institución pública colombiana, fondos públicos, educación gratuita |
+| Coursera | Cursos con Financial Aid gratuitos; tiene API oficial preferida |
+| edX | Auditorías gratuitas; tiene API oficial preferida |
+| Khan Academy | Totalmente gratuito; tiene API oficial |
+| Miríada X | Plataforma iberoamericana de cursos abiertos |
+
+## Proceso de aprobación
+
+Ningún curso importado se publica automáticamente. El proceso es:
+
+1. Scraper importa → estado `pendiente`
+2. Admin revisa metadatos, verifica que el enlace funciona
+3. Admin aprueba → el curso aparece en el catálogo con enlace a la fuente original
+4. Si hay dudas legales → `rechazado`
+
+## Contacto para opt-out
+
+Propietarios de contenido que deseen que SaberHub no enlace sus cursos pueden contactar: legal@saberhub.edu.co. Procesamos solicitudes en 48 horas hábiles.

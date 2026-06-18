@@ -1,0 +1,133 @@
+---
+title: Autenticación
+description: Endpoints de autenticación, registro y gestión de sesión en SaberHub.
+---
+
+# API — Autenticación
+
+## POST /api/auth/login
+
+Login con email y contraseña.
+
+**Body:**
+```json
+{ "email": "user@example.com", "password": "Contraseña123" }
+```
+
+**Respuesta 200:**
+```json
+{ "user": { "id": 1, "nombre": "Ana", "email": "...", "rol": "estudiante" } }
+```
+Establece cookie `token` (HttpOnly, Secure, SameSite=Lax, 7 días).
+
+**Errores:**
+- `401` — credenciales inválidas
+- `403` — cuenta bloqueada por brute force (`bloqueadoHasta`)
+- `403` — email no verificado
+
+---
+
+## POST /api/auth/register
+
+Registro de estudiante.
+
+**Body:**
+```json
+{
+  "nombre": "Ana García",
+  "email": "ana@example.com",
+  "password": "Contraseña123",
+  "documento": "1234567890"
+}
+```
+
+**Respuesta 201:** `{ "message": "Verifica tu email para continuar" }`
+
+Envía email con enlace de verificación (token 24h).
+
+---
+
+## POST /api/auth/verify
+
+Verificar token de email.
+
+**Body:** `{ "token": "<token-uuid>" }`
+
+**Respuesta 200:** `{ "message": "Email verificado" }` + cookie de sesión activa.
+
+---
+
+## POST /api/auth/forgot-password
+
+Solicitar recuperación de contraseña.
+
+**Body:** `{ "email": "user@example.com" }`
+
+**Respuesta 200:** Siempre responde OK (no revela si el email existe).  
+Envía email si el usuario existe con token de 1 hora (un solo uso).
+
+---
+
+## POST /api/auth/reset-password
+
+Restablecer contraseña con token.
+
+**Body:** `{ "token": "<token>", "password": "NuevaContraseña123" }`
+
+**Respuesta 200:** `{ "message": "Contraseña actualizada" }`
+
+---
+
+## GET /api/auth/me
+
+Obtener usuario autenticado actual.
+
+**Requiere:** cookie `token`
+
+**Respuesta 200:**
+```json
+{
+  "id": 1,
+  "nombre": "Ana",
+  "email": "ana@example.com",
+  "rol": "estudiante",
+  "institucionId": null,
+  "imagen": "https://res.cloudinary.com/..."
+}
+```
+
+---
+
+## POST /api/auth/logout
+
+Cierra sesión (borra cookie).
+
+**Respuesta 200:** `{ "message": "Sesión cerrada" }`
+
+---
+
+## GET /api/auth/google
+
+Inicia flujo OAuth 2.0 con Google. Redirige a Google consent screen.
+
+---
+
+## GET /api/auth/google/callback
+
+Callback OAuth. Crea usuario si no existe, establece cookie de sesión.
+
+---
+
+## POST /api/auth/register-instructor
+
+Registro de instructor via token de invitación.
+
+**Body:**
+```json
+{
+  "token": "<invitation-token>",
+  "nombre": "Carlos",
+  "email": "carlos@example.com",
+  "password": "Pass123"
+}
+```
