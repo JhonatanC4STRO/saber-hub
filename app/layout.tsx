@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   title: 'SABERHUB | Learning Platform',
   description:
     'Plataforma colombiana de aprendizaje en linea gratuita para programacion, ciberseguridad, redes e inteligencia artificial.',
+    verification: {
+    google: 'gb3ulEuyfPhIZRJZMpdBF2HFaj5E1nXG_Dn6dBfqyMY',
+  },
 };
 
 export default async function RootLayout({
