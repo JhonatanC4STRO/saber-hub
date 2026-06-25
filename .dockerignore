@@ -34,7 +34,6 @@ uploads/
 .prettierrc
 eslint.config.mjs
 tsconfig.tsbuildinfo
-pnpm-lock.yaml
 CLAUDE.md
 AGENTS.md
 INSTITUCIONES_SETUP.md
