@@ -29,17 +29,27 @@ export async function POST(req) {
       );
     }
 
-    const usuarioExistente = await prisma.usuario.findFirst({
+    const usuariosExistentes = await prisma.usuario.findMany({
       where: {
         OR: [{ email }, { documento }],
       },
+      select: { id: true, verificado: true },
     });
 
-    if (usuarioExistente) {
+    if (usuariosExistentes.some((u) => u.verificado)) {
       return NextResponse.json(
         { error: 'El usuario ya existe (email o documento duplicado)' },
         { status: 409 }
       );
+    }
+
+    // Las cuentas no verificadas son provisionales: nadie demostró ser dueño
+    // del correo, así que un nuevo registro con el mismo email o documento
+    // las reemplaza (p. ej. cuando el usuario escribió mal su correo).
+    if (usuariosExistentes.length > 0) {
+      await prisma.usuario.deleteMany({
+        where: { id: { in: usuariosExistentes.map((u) => u.id) } },
+      });
     }
 
     const rol = await prisma.rol.upsert({
