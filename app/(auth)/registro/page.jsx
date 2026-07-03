@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Check, Eye, EyeOff, Globe2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { ArrowLeft, Check, Eye, EyeOff, Globe2, MailCheck } from 'lucide-react';
 
 function GoogleLogo() {
   return (
@@ -113,7 +113,6 @@ function Field({ id, label, required, error, children }) {
 }
 
 export default function Registro() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
   const loginUrl = redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login';
@@ -130,6 +129,7 @@ export default function Registro() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [emailExists, setEmailExists] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const requirements = useMemo(
     () => [
@@ -196,7 +196,7 @@ export default function Registro() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push(loginUrl);
+        setSuccess(true);
         return;
       }
 
@@ -225,6 +225,29 @@ export default function Registro() {
             Espa&ntilde;ol
           </button>
 
+          {success ? (
+            <div className="my-auto w-full max-w-[440px] py-8 text-center lg:py-12">
+              <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#ECFDF5]">
+                <MailCheck size={30} className="text-[#10B981]" />
+              </span>
+              <h2 className="mt-6 text-[30px] font-bold text-[#111827]">&iexcl;Revisa tu correo!</h2>
+              <p className="mt-3 text-base font-normal leading-relaxed text-[#4B5563]">
+                Tu cuenta fue creada. Te enviamos un enlace de verificaci&oacute;n a{' '}
+                <strong className="font-semibold text-[#111827]">{formData.email}</strong>. Debes
+                verificar tu cuenta antes de poder iniciar sesi&oacute;n.
+              </p>
+              <p className="mt-3 text-sm font-normal text-[#6B7280]">
+                El enlace es v&aacute;lido por 24 horas. Si no encuentras el correo, revisa tu
+                carpeta de spam o correo no deseado.
+              </p>
+              <Link
+                href={loginUrl}
+                className="mt-8 inline-flex h-[52px] w-full items-center justify-center rounded-full bg-[#1E40AF] text-base font-semibold text-white no-underline transition hover:bg-[#1E3A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E40AF]"
+              >
+                Ir al inicio de sesi&oacute;n
+              </Link>
+            </div>
+          ) : (
           <div className="w-full max-w-[440px] py-8 lg:py-12">
             <Link
               href={loginUrl}
@@ -432,6 +455,7 @@ export default function Registro() {
               </Link>
             </div>
           </div>
+          )}
         </section>
       </div>
     </main>
