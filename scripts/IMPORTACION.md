@@ -62,3 +62,27 @@ de las lecciones incluidas sí se reemplazan por la lista del JSON.
 
 Antes de importar en producción, crea una copia de seguridad de PostgreSQL. No
 guardes archivos reales con contraseñas dentro del repositorio.
+
+## Crear contenido inicial completo
+
+El comando `content:seed` crea una demostración lista para usar con dos
+instructores, seis estudiantes, tres cursos publicados, portadas, módulos,
+lecciones, recursos, evaluaciones e inscripciones. Primero ejecuta la vista
+previa:
+
+```sh
+npm run content:seed
+```
+
+Para aplicarla, define una contraseña temporal que cumpla la política de
+seguridad:
+
+```sh
+export SABERHUB_SEED_PASSWORD='CambiaEstaClave123!'
+npm run content:seed -- --apply
+unset SABERHUB_SEED_PASSWORD
+```
+
+Las cuentas nuevas reciben la contraseña temporal; las cuentas existentes
+conservan su contraseña. Repetir el comando actualiza el contenido sin duplicarlo
+y no reinicia progreso ni intentos de evaluación existentes.
