@@ -1,0 +1,3 @@
+nombre,email,documento,rol,password,telefono,activo,verificado
+Ana Estudiante,ana@example.com,100000001,estudiante,Cambiar123,,true,true
+Carlos Instructor,carlos@example.com,100000002,instructor,Cambiar123,,true,true

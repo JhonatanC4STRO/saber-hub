@@ -1,0 +1,40 @@
+[
+  {
+    "titulo": "Curso de ejemplo para importar",
+    "instructorEmail": "carlos@example.com",
+    "descripcion": "Curso de demostración cargado mediante el importador de SABERHUB.",
+    "categoria": "Programación",
+    "estado": "borrador",
+    "imgPortada": "https://res.cloudinary.com/tu-cloud/image/upload/portada.jpg",
+    "nivel": "Básico",
+    "duracion": 2,
+    "duracionUnidad": "horas",
+    "idioma": "Español",
+    "objetivos": ["Comprender el tema principal"],
+    "requisitos": ["Acceso a internet"],
+    "tags": ["ejemplo", "programación"],
+    "otorgaCertificado": false,
+    "modulos": [
+      {
+        "titulo": "Introducción",
+        "descripcion": "Primer módulo del curso.",
+        "estado": "activo",
+        "lecciones": [
+          {
+            "titulo": "Bienvenida",
+            "contenidoTexto": "Contenido de la primera lección.",
+            "duracion": 10,
+            "esPreview": true,
+            "recursos": [
+              {
+                "titulo": "Guía de apoyo",
+                "tipo": "pdf",
+                "urlDocumento": "https://example.com/guia.pdf"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

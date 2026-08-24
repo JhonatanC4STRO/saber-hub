@@ -12,7 +12,10 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \".\"",
-    "test": "node __tests__/runner.js"
+    "test": "node __tests__/runner.js",
+    "admin:create": "tsx scripts/crear-admin.ts",
+    "users:import": "tsx scripts/importar-usuarios.ts",
+    "courses:import": "tsx scripts/importar-cursos.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
